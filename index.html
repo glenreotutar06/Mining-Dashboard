@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Geologica Pty Ltd &mdash; Mining Business Unit Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0C3547;
+    --navy-2:#144A61;
+    --navy-tint:#E7EEF0;
+    --olive:#82914F;
+    --olive-tint:#EDF0E3;
+    --gold:#AD7F24;
+    --gold-tint:#F5EDDB;
+    --risk-red:#B5533D;
+    --cream:#F5F3EC;
+    --white:#FFFFFF;
+    --ink:#1D2B2E;
+    --ink-soft:#5B6B6E;
+    --line:#E1DED2;
+    --line-soft:#EDEBE1;
+    --radius:9px;
+    --font-head:'Space Grotesk', 'Segoe UI', Helvetica, Arial, sans-serif;
+    --font-body:'IBM Plex Sans', 'Segoe UI', Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:var(--font-body);
+    font-size:14.5px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{max-width:1220px;margin:0 auto;padding:22px 26px 60px;}
+
+  /* ---------- Header ---------- */
+  .header{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:24px;
+    padding:20px 26px;
+    background:var(--navy);
+    border-radius:12px;
+    overflow:hidden;
+    margin-bottom:18px;
+  }
+  .header::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      radial-gradient(circle at 82% -20%, rgba(255,255,255,0.06), transparent 55%);
+    pointer-events:none;
+  }
+  .contour{position:absolute; right:-40px; top:-30px; width:340px; height:220px; opacity:0.16; pointer-events:none;}
+  .brand{display:flex; align-items:center; gap:16px; position:relative; z-index:1;}
+  .brand img{width:56px; height:56px; border-radius:50%; display:block; box-shadow:0 0 0 3px rgba(255,255,255,0.12);}
+  .brand-text h1{
+    font-family:var(--font-head);
+    font-weight:600;
+    font-size:21px;
+    letter-spacing:0.2px;
+    color:#fff;
+    margin:0 0 2px;
+  }
+  .brand-text p{margin:0; color:#C7D8DD; font-size:12.5px;}
+  .header-status-chip{display:flex; align-items:center; gap:6px; margin-top:5px !important; font-size:12px; font-weight:700; color:#fff !important;}
+  .header-status-chip .dot{width:8px; height:8px; border-radius:50%; flex:none;}
+  .header-status-chip .dot.level-green{background:var(--olive);}
+  .header-status-chip .dot.level-amber{background:var(--gold);}
+  .header-status-chip .dot.level-red{background:#E38268;}
+
+  .source-panel{
+    position:relative; z-index:1;
+    text-align:right;
+    color:#DCE8EA;
+    font-size:12.5px;
+    display:flex; flex-direction:column; align-items:flex-end; gap:6px;
+  }
+  .source-panel .src-line{display:flex; align-items:center; gap:7px;}
+  .src-dot{width:7px; height:7px; border-radius:50%; background:var(--olive); flex:none;}
+  .src-dot.offline{background:var(--gold);}
+  .source-file{color:#fff; font-weight:600;}
+  .btn{
+    font-family:var(--font-body);
+    font-size:12.5px;
+    font-weight:600;
+    padding:7px 14px;
+    border-radius:7px;
+    border:1px solid rgba(255,255,255,0.35);
+    background:rgba(255,255,255,0.08);
+    color:#fff;
+    cursor:pointer;
+    transition:background .15s ease;
+  }
+  .btn:hover{background:rgba(255,255,255,0.18);}
+  .btn.primary{background:var(--olive); border-color:var(--olive); color:#12210a;}
+  .btn.primary:hover{background:#7c8b49;}
+  #fileInput{display:none;}
+
+  /* ---------- Controls ---------- */
+  .controls{
+    display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; gap:12px;
+    margin-bottom:20px;
+  }
+  .tabs{display:inline-flex; background:var(--white); border:1px solid var(--line); border-radius:8px; padding:3px; gap:2px;}
+  .tab-btn{
+    font-family:var(--font-body); font-weight:600; font-size:13px;
+    padding:7px 16px; border-radius:6px; border:none; background:transparent;
+    color:var(--ink-soft); cursor:pointer;
+  }
+  .tab-btn.active{background:var(--navy); color:#fff;}
+  .period-select{
+    font-family:var(--font-body); font-size:13.5px; font-weight:600; color:var(--ink);
+    padding:8px 14px; border-radius:8px; border:1px solid var(--line); background:var(--white);
+    min-width:230px; cursor:pointer;
+  }
+  .period-note{font-size:12px; color:var(--ink-soft); flex-basis:100%;}
+
+  /* ---------- KPI cards ---------- */
+  .kpi-row{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:18px;}
+  .kpi-card{
+    background:var(--white); border:1px solid var(--line); border-left:4px solid var(--navy);
+    border-radius:8px; padding:14px 16px;
+  }
+  .kpi-card.completed{border-left-color:var(--olive);}
+  .kpi-card.progress{border-left-color:var(--navy);}
+  .kpi-card.scheduled{border-left-color:var(--gold);}
+  .kpi-label{font-size:12px; color:var(--ink-soft); font-weight:600; margin-bottom:6px;}
+  .kpi-value{font-family:var(--font-head); font-size:28px; font-weight:600; color:var(--ink); line-height:1;}
+  .kpi-sub{font-size:12px; color:var(--ink-soft); margin-top:5px;}
+
+  /* ---------- Chart cards ---------- */
+  .charts-row{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;}
+  .chart-card{
+    background:var(--white); border:1px solid var(--line); border-top:3px solid var(--navy);
+    border-radius:8px; padding:16px 18px 10px;
+  }
+  .chart-card.alt{border-top-color:var(--olive);}
+  .chart-title{font-family:var(--font-head); font-size:14.5px; font-weight:600; color:var(--ink); margin:0 0 2px;}
+  .chart-subtitle{font-size:12px; color:var(--ink-soft); margin:0 0 10px;}
+  .donut-wrap{display:flex; align-items:center; gap:18px;}
+  .donut-total{font-family:var(--font-head); font-size:26px; font-weight:700; fill:var(--ink);}
+  .donut-sub{font-size:10.5px; fill:var(--ink-soft);}
+  .legend{display:flex; flex-direction:column; gap:9px; font-size:13px;}
+  .legend-item{display:flex; align-items:center; gap:8px;}
+  .swatch{width:11px; height:11px; border-radius:3px; flex:none;}
+  .legend-label{color:var(--ink); font-weight:500;}
+  .legend-count{margin-left:auto; padding-left:10px; font-weight:700; color:var(--ink);}
+  .legend-pct{color:var(--ink-soft); font-size:11.5px; margin-left:4px;}
+
+  .compare-header{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:6px;}
+  .delta-chip{font-size:12px; font-weight:700; padding:3px 9px; border-radius:999px;}
+  .delta-chip.up{background:var(--olive-tint); color:#4d5b2c;}
+  .delta-chip.down{background:var(--gold-tint); color:#7a5a17;}
+  .delta-chip.flat{background:var(--line-soft); color:var(--ink-soft);}
+
+  .axis-label{font-size:9.5px; fill:var(--ink-soft);}
+  .axis-label-cat{font-size:10px; fill:var(--ink-soft);}
+  .bar-total{font-size:10.5px; fill:var(--ink); font-weight:700;}
+
+  .trend-row{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:24px;}
+  .trend-row.single{grid-template-columns:1fr;}
+
+  /* ---------- Client shares ---------- */
+  .client-card{}
+  .share-bars{display:flex; flex-direction:column; gap:9px; margin-top:4px;}
+  .share-row{display:grid; grid-template-columns:180px 1fr 34px 42px; align-items:center; gap:10px; font-size:12.5px;}
+  .share-label{color:var(--ink); font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .share-bar-track{background:var(--line-soft); border-radius:4px; height:13px; overflow:hidden;}
+  .share-bar-fill{display:block; height:100%; border-radius:4px;}
+  .share-count{text-align:right; font-weight:700; color:var(--ink);}
+  .share-pct{text-align:right; color:var(--ink-soft);}
+  @media (max-width:600px){
+    .share-row{grid-template-columns:110px 1fr 26px 36px; font-size:11.5px;}
+  }
+
+  /* ---------- Tables ---------- */
+  .section-title{font-family:var(--font-head); font-size:17px; font-weight:600; margin:26px 0 4px;}
+  .section-caption{font-size:12.5px; color:var(--ink-soft); margin:0 0 12px;}
+  .table-card{background:var(--white); border:1px solid var(--line); border-radius:8px; overflow:hidden;}
+  .table-scroll{max-height:440px; overflow-y:auto;}
+  table.data-table{width:100%; border-collapse:collapse; font-size:13px;}
+  .data-table thead th{
+    position:sticky; top:0; z-index:2;
+    text-align:left; background:var(--navy-tint); color:var(--navy);
+    padding:10px 12px; font-weight:700; font-size:12px; border-bottom:1px solid var(--line);
+    white-space:nowrap;
+  }
+  .data-table th.sortable{cursor:pointer; user-select:none;}
+  .data-table th.sortable:hover{background:#dde9ec;}
+  .sort-arrow{margin-left:4px; font-size:10px; color:var(--ink-soft);}
+  .data-table tbody td{padding:9px 12px; border-bottom:1px solid var(--line-soft); vertical-align:top;}
+  .data-table tbody tr:hover{background:#FBFAF6;}
+  .cell-remarks{color:var(--ink-soft); max-width:340px;}
+  .cell-muted{color:var(--ink-soft);}
+  .status-pill{display:inline-block; padding:3px 10px; border-radius:999px; font-size:11.5px; font-weight:700; white-space:nowrap;}
+  .status-pill.completed{background:var(--olive-tint); color:#4d5b2c;}
+  .status-pill.in-progress{background:var(--navy-tint); color:var(--navy);}
+  .status-pill.scheduled{background:var(--gold-tint); color:#7a5a17;}
+  .priority-pill{display:inline-block; padding:3px 9px; border-radius:999px; font-size:11.5px; font-weight:700;}
+  .priority-pill.p1{background:var(--gold-tint); color:#7a5a17;}
+  .priority-pill.p2{background:var(--navy-tint); color:var(--navy);}
+  .priority-pill.p3{background:var(--line-soft); color:var(--ink-soft);}
+  .empty-row td{text-align:center; color:var(--ink-soft); padding:26px; font-style:italic;}
+
+  /* ---------- KPI trend ---------- */
+  .kpi-trend{display:block; margin-top:5px; font-size:11.5px; font-weight:700;}
+  .kpi-trend.up{color:#4d5b2c;}
+  .kpi-trend.down{color:var(--risk-red);}
+  .kpi-trend.flat{color:var(--ink-soft); font-weight:500;}
+
+  /* ---------- Headline summary ---------- */
+  .headline{
+    background:var(--white); border:1px solid var(--line); border-left:4px solid var(--olive);
+    border-radius:8px; padding:14px 18px; margin-bottom:18px; font-size:15px; color:var(--ink); line-height:1.55;
+  }
+  .headline strong{color:var(--navy); font-weight:700;}
+
+  /* ---------- Avatars ---------- */
+  .avatar-group{display:inline-flex; align-items:center;}
+  .avatar{
+    width:24px; height:24px; border-radius:50%; background-size:cover; background-position:center;
+    display:inline-flex; align-items:center; justify-content:center; font-size:10.5px; font-weight:700;
+    color:#fff; border:2px solid var(--white); box-shadow:0 0 0 1px var(--line); flex:none;
+  }
+  .avatar-group .avatar:not(:first-child){margin-left:-8px;}
+  .assignee-names{margin-left:8px; font-size:12.5px; color:var(--ink-soft); white-space:nowrap;}
+  .avatar.lg{width:34px; height:34px; font-size:13px;}
+
+  /* ---------- Assignee photos modal ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(13,30,35,0.45); display:flex;
+    align-items:center; justify-content:center; z-index:80; padding:20px;
+  }
+  .modal-overlay.hidden{display:none;}
+  .modal{
+    background:var(--white); border-radius:10px; max-width:480px; width:100%; max-height:82vh;
+    overflow-y:auto; padding:22px 24px; box-shadow:0 18px 50px rgba(0,0,0,0.25);
+  }
+  .modal-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;}
+  .modal-header h3{font-family:var(--font-head); font-size:17px; margin:0; color:var(--ink);}
+  .modal-close{background:none; border:none; font-size:22px; line-height:1; cursor:pointer; color:var(--ink-soft); padding:0 4px;}
+  .modal-desc{font-size:12.5px; color:var(--ink-soft); margin:0 0 14px;}
+  .avatar-manage-list{display:flex; flex-direction:column; max-height:300px; overflow-y:auto; border-top:1px solid var(--line-soft);}
+  .avatar-manage-row{display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line-soft);}
+  .avatar-name{flex:1; font-size:13.5px; font-weight:500; color:var(--ink);}
+  .btn-small{font-size:11.5px; padding:5px 10px;}
+  .modal .btn{color:var(--ink); border:1px solid var(--line); background:var(--cream);}
+  .modal .btn:hover{background:var(--navy-tint);}
+  .modal-actions{display:flex; gap:8px; margin-top:14px; flex-wrap:wrap;}
+  .avatar-empty{font-size:12.5px; color:var(--ink-soft); padding:14px 0; text-align:center;}
+
+  /* ---------- Print header (hidden on screen) ---------- */
+  .print-header{display:none;}
+
+  .footer{margin-top:30px; font-size:11.5px; color:var(--ink-soft); text-align:center;}
+
+  @media (max-width:880px){
+    .kpi-row{grid-template-columns:repeat(2,1fr);}
+    .charts-row, .trend-row{grid-template-columns:1fr;}
+    .header{flex-direction:column; align-items:flex-start;}
+    .source-panel{align-items:flex-start; text-align:left;}
+  }
+
+  /* ---------- Print / export ---------- */
+  @media print{
+    body{background:#fff;}
+    .page{max-width:100%; padding:0; margin:0; display:table; width:100%;}
+    .header, .controls, .modal-overlay, .footer{display:none !important;}
+    .print-body{display:table-row-group;}
+    .print-header{
+      display:table-header-group !important;
+    }
+    .print-header-inner{
+      display:flex; align-items:center; gap:14px;
+      padding-bottom:12px; border-bottom:2px solid var(--navy); margin-bottom:16px;
+    }
+    .print-header img{width:46px; height:46px; border-radius:50%;}
+    .print-header h1{font-family:var(--font-head); font-size:19px; margin:0; color:var(--navy);}
+    .print-header p{margin:2px 0 0; font-size:11.5px; color:var(--ink-soft);}
+    .table-scroll{max-height:none !important; overflow:visible !important;}
+    .kpi-card, .chart-card, .table-card, .headline{break-inside:avoid; page-break-inside:avoid;}
+    .section-title{page-break-after:avoid;}
+    .data-table thead th{position:static;}
+    * { -webkit-print-color-adjust:exact; print-color-adjust:exact; color-adjust:exact; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="print-header" id="printHeader">
+    <div class="print-header-inner">
+      <img src="data:image/jpeg;base64,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" alt="Global Geologica Pty Ltd logo">
+      <div>
+        <h1>Global Geologica Pty Ltd</h1>
+        <p>Mining Business Unit &mdash; Task Dashboard</p>
+        <p id="printMeta"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="print-body">
+
+  <div class="header">
+    <svg class="contour" viewBox="0 0 340 220" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,150 Q40,100 80,140 T160,120 T240,150 T340,100" stroke="#ffffff" stroke-width="2" fill="none"/>
+      <path d="M0,175 Q40,130 80,165 T160,150 T240,175 T340,130" stroke="#ffffff" stroke-width="2" fill="none"/>
+      <path d="M0,200 Q40,160 80,190 T160,180 T240,200 T340,160" stroke="#ffffff" stroke-width="2" fill="none"/>
+    </svg>
+    <div class="brand">
+      <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAEsASwDASIAAhEBAxEB/8QAHQABAAAHAQEAAAAAAAAAAAAAAAMEBQYHCAkCAf/EAEcQAAEDAwIDBAYHBAgFBQEAAAEAAgMEBREGIQcSMQgTQVEUIjJhcYEJQlJygpGhFSNisRYzY5KissHRFyQ0U3M1Q0TC4fH/xAAbAQEAAgMBAQAAAAAAAAAAAAAABAUCAwYBB//EADQRAAIBAwIEAggGAwEBAAAAAAABAgMEESExBRJBURNxIjJhgZGx0fAUM0KhweEVI1LxNP/aAAwDAQACEQMRAD8A6QIiKIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIvhcAvJk9yA9oofee8Lz3vvKAjIpczDzygmCAmEUDvQejsr0JPf+aAiovAk+a+h4PuQHpE6ogCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiAIiIAi+FwChvf5oD2X46bqG+THUqBLUho64VA1LrG1aWtc1yu9xpbXb4RmSqrZmxRN/E4gfLqvUs6IbFwvqA1S0le1oyXALUHiX9IxoHTLpabTdNXaxq25Akpx6NSZ/8rxzOH3WH4rWzWn0hfFHUjpGWcWrStM7oKOm9ImA/wDJLkZ+DQpsLOtPpjzINS9oU9M58jqSbkHEhoc/7oyqfV6mpaHJqamCmA/70zWfzIXF/UvHHiHq8uN51vfq5pySx1wkjZ/dYWt/RUqbQerKy2m6TWC8VFERzmqlpZXtI88kE496k/gFH8yaRE/yWfUg2dnZuKOm43lr9R2ZhHg64wA/51HpNfWatP8Ay15ttQf7Gsif/Jy4h2WwVOorpTW22UIra6pdyQwRMbzPdgnAz7gVdMvA/XVMcnRl0afOOlz/ACSdnSpvE6qT9uPqYx4hUlqqefvyO1Ud471gcwF7ftN3H6KLHd2nx3XDO26ovumZ3GgvNztMsbiD6NWSwlpBwQeVw8VkzSnbB4t6Vc0U+tKm5wsP9RdmMrG/DLhzf4klw6f6ZJmUeJwfrRa+/cdio7gw49bdTMdUHLnHoP6Si4QOjh1jpOKoZsHVlkmMb/iYpCQfk8LaXhb2oeH/ABWdHDYdRQ/tFw/9Mrv+WqgfIMf7X4S5QalvVpetEn07mjV0jLUz62UO6FRRJ81blNdgdnHBHgqnBWB/Q5UYlFSByvql2SB3iozX+aA9IiIAiIgCIiAIiIAiIgCIiAIiIAiIgCIiALy52PijnY+KgSycoKA+ySBvjuqXcrvBb6aWonmjggiaZJJZXhjGNHVznHYAeZVr8UeKunuFGlavUGpLgy326D1ckc0krz7McbBu958Gj4nABK5ado3tZ6o4+V01C10lj0ex+YbNDJvNjo+ocP6x3jy+y3wBO6l0Ladd6aLuQ7i6hbrXV9jZ3j39IlarBJUWjhxBFqC4Nyx16qQfQoj/AGbdnTH37N+8tFdf8TNU8Urublqu+Vd7qs5YKh/7uIeUcYw1g+6AqJZqaCtvFBT1T3x0s1RHFK+PHM1jngOIztkAnqthuInZ00/X3Gstehq7udSWqFjqiy10xLqqMtyJY3u8T4/Vzt6vjaudtYSjCS1fX6vpuUUpV7xN50XT73MNU3De5VnDar1rFPTS26lqxSS07C4zMJIHO4YwG5c3x+sFaSzp2dy5951Xw3vsMlGy+Ub4zBUNLXRVDGnqD0PKSfwBWlp7s9651BVTR/sk26lgkdFLX3J4p4BykguBO7htnIBCzhdxpzqQrySSw0/Y9v3yaZUHKMZU1nO/mirdmHTNv1BxGlqbjA2rjtNFJXxUzgCJJGlobseuMkgeeFc2geIvFPiTqKvvVt1Lb6ClopWOlobnO2Glax2S1nLy5cMNILs596xRojWNy4T65Zc6Lup6ijkkp5og/MU8eeV7eYeBxkOHiAVkafV/BOsuZv8ANpe9/tFz+/faQ5vohlzk/WxjO+On8PgoV3Sk6spuHMpJJaJ476Nrfub6E0oKKlhpvOuM/wDhVNNaHu+mO09pz9t1Nvq6+4mW6PNtjLIW5jlGA3Axu3y8fFT2uWXCjuuorjbON1NTvimqJ2WhtVI2SMtLiIGjmxkEco26qxLZx3kfxpi13d6B80UMb4IaCkeB3MZYWsaC7Y45iSfEk9FN3LV3Bu91dVV1OlNS09VUSPme+K4NIL3EknBd5laJUa/iRnVi36KTwotZy9Nf4NqqU+RqD6t6trt2KloGisvDbhQeI16tUOoL5c6x1PbaasHNHGcuy8g53Ja9xOM4AAxklVbRGtbN2g7pJpLVOmrZb7hUwyPt92tUXdSQvaM4PU9N+uDggjfKtrQOsNL6u4aHh9rC4PsQpqk1Vru/LzRxuJJ5H+W7nDfAId1BAVwaRp9CcBJqrUp1dR6w1A2B8Vvoba31WucMcziC7HkSSMAnAJKxrRw6nMpeLl8rWdv04a0x39+T2m9IYa5Ma7e/2+RizQ3Cy56517PpaCaKmqKd04qKqRpdHEIiWlxA3wXYA+8rTrqb0CvnpxNHOaeZzGzwE8ji1xHOwnBwcZB2Kztp2tl4bcC77q+peGal1lO6mo39HNicXFzx+cjv7iwrpfTFx1ffKOzWimNTXVLuSOPOAABkucfBoG5PgFb0K8pyqTm/Qjp716z8unuINSmoqMY+s9fjsZt4N9tTXnC58FFc6l2rrAzDfRLjKfSIm/2U+7h8H8w+C6AcGO0XpLjPbTUaeuOKyJgdU2yqxHVU/wB5md2/xty33joueU3ZlooqoWj/AIh2P+lBH/pbhjLvsZ5ubP4c+5YtqqbUfCjWZZ3tTYtQ2yQOZPTScr2HqHMeOrSPkR18lGcbW8b8F4l5NZ9uHuvaidTr17XHiLMfv71O39Hcw8AE4+aq0NQHALRvsv8AbTpuIEtJpnWUkNs1Q7EdNWtAZT3A/Zx0jlP2fZd9XB9Vbh266c4GTsqmpSnSlyzRe06sK0eaD0LpY/8AJRAcqQp6gPCm2P8AyWo2kRERAEREAREQBERAEREAREQBERAF8JwF9UKR/j4BAeJH8oVh8VuKVj4TaNuGpdQ1fo1upG9G7yTPPsRRt+s9x2A+JOwJV03i6QWyjnqameOnp4Y3SyzSu5WRsaCXOcfAAAkn3LkT2sO0bVcfteONHLJFpC1vdFaqY7d74OqXj7b/AAB9luB1JzMtqDrzx0W5DurhW8M9XsWvx4486h4+6xfeLw801BAXMt1qjeTFRxE9B9p525n9SfIABVfTXCzTuj9Nwam4nVFXRU9Z/wBBZKTarnb1Mjx1a0DfG3vO4CsPTvDfVWrKN1ZZtP3C40rSR38EXqEjyccZPwys98MNY27iHWW/SPEe1Mk1ZZ5Oa2z3Rjo3TuA2il8S7YHByHgA4LhvYXlXwqfLRekfW5WuZL+Payiox8SblV3e2dvvsY04x8HJdIVoummKO5V2lpqOOuZVvic8U3MCeV7sZ22OSNg7dZX4maj0lpa46X4h3CjrbvqOutUD7dRxSGKna5rQTLI8bnHeAcu+cdFHtmpNW8P2ar1TxMubY6OqZJQ0GnmPD2VMg6GFnRseNs9SCS7wzr3bG6v4tVlg0vQx1F5loYPRqChgaAyCMYy4nYAdMvcegHwUKjCpd8viyzGGjknumtVn2NLLN03GjlU1rLZY2afb5F26p7Qc+qDZrq7T1DR6wtlSJor1A5wHdg7RmP6wIJBDiRjpjJUpSUXFXtC1ZbTRXbUUHNg8v7qhi9xPqxj9StpeC3YcsenmU9x1p3epLts70FuRRQnyI2MpHm7Df4T1W2Fo0xDR00NPBBHT08TQ2OGFgYxg8g0bAfBbHVt6DxQgsrZvp5dcfAkQtK1XWvLGei/k0F0h9H1qe5Njk1BqK32ZpxmChidVyD8R5W/llZUsv0emiadoNfeL9cn+PLLFTt/JrCf1W49LYgAMMVRiso8gtMryvL9WCbGyoR/TnzNTYOwXwvYzldbrtIftPukmf0wpWu+j+4bTtPctvtIfOK482Pk5hW4jLQwdV6daWYWr8RW/6fxNv4aj/wAL4GgGo/o46FzHusOsa2mf9WO50bJW/wB6MtP6LCWuuxZxP0ZHJNT2uHUtGzJMtml55MeZicGv/IFdZn2cOHT9FJVFjBGS1SIX1aO7yR52FCa0WDkHp3jjqDS1H/RrUtrptR2anAhfabzT8ssDRsGtcRzNwOgcDhX7wNvmkq3itdv6JW+ewy11jfHRQV83eclXzczww5Pq4DSBncNd06LfPir2f9IcWaF0Go7LDVzhpbHXxjuqqH7ko3+RyPctBOOnZG1ZwOnfqGw1FRe9PUzxM24UzSyroMHIdK1vgP8AuN28w1Z8tvcxlCPoSl8G/Lb+SHOlWt2pP0or4owm/Seo5tUusz7dWu1E+flMJY7vTMT7efj63PnHjlZT7VUjJdZadoDI2rvVLaIoa58Q5nPlJJHTcnqfg4KmwdqjiBHbRS+m0Ms3JyCufRNM+PjnlJ/Crut2p/8AhDwus+rIaVl615rCWSYXCtaZnRsz4eJOC31RjJdvsAFsqyuI1adSpFZWUknu2t28aJJe0iQVNwlGEnjdtrbHzZrzUU81FN3c8UtPKN+SVjmOHvwcH5rfHsc9rSXUklJobWVYX3oDu7ZdJnb1gA2hkPjKANnfXAwfWG+I9N328caqq+aB4h2mOK/QUT6yhrvRRDUUr2gEBwHgQ5p22IyDnbGtEUstNKyRj3RTRuDmvjcQ5jgcggjoQRkFSoyV5GVKosSWNnla7NPsYxlK0kqkHlP3bdGd0bZcuYDJVxU83OOuVqB2QO0Z/wAXdKOt93nb/Sy0sayszt6VH0ZUAeZ6P8nb9HBbT2uu5wMlUVSEqcnCW6Omp1I1YqcdmXEx3gvalopA4BTDTkLWbD6iIgCIiAIiIAiIgCIiAIiIDy84ClaiTlaVHkd1PkrX1vqug0dpq63y5y9zbrbTSVdQ/OMRsaXHHvOMD3kL3fRHjeNWabfSLcfH2WzU/DWz1BZW3SMVN3fGd46XP7uH3GRwJP8AC0D6y0R0BYIdVa5sNnqXllPXVsUEpBweQu9YD3kAj5qJxF11cOJuub3qm6OJrbrVOqHMztE07MjHua0NaPuqh0NbUWytp6ylldBVU8jZopWdWPactI+BAXU0qDp0eSOja39pyNav41bne38Ga+NHGPVNi1/XWGw182nLPZHtpKWjoQIwQ1oPM7bcHOw6Yx5kqa4kXh3EjgPYdb3OJlNqWguX7P8ATYG92ahgJ3GOmCA4Y6ODsYypmPiFoHjG6Go1ZpG7yaop4C6abT7HP9IYwbuIaQcAeYPL0DsKxOJPEg8R5LLprTVmfa9PUDhDbrVH60s0rjyhzsfWOcAZPtEkkkqmoUm3SgqXLKHrPTtrr15iXUnpOTnzKWy1+1ggWO2607Rmu6C2+lSXS5GIRmon2ipIG4DpH4GAPEnq5x8SV0X4IcCrFwi0+y3WmHvauUB1ZcpWjvqp48XHwaPBg2HvOSaN2auBFNwf0bFSSMjlv1aGzXOrbvzSY2jafsMyQPM5PithrRawOXZYXNdT/wBdNYgiztbbwl4lTWTIdtswAHq/PCuKltrWAZAypqlpAwDZTrI8DAGVBLEgMpQB0wozYgPDKjBmOu69YwgIIi9y+917lFXwkDqgIJiGOihvpw5TBfnbwXlAU6ooGvBBColxs7XscCwOBBGCNvgrrIyoE9OHgoDmx2v+x4zTkNbrjQtCWUDMzXSywN2gHV08DR9QdXMHs9RtkDCOiNfaW1JoGm0Vrmaqt0NvmM9pvdE0ufTZySxwAJxucHBGMdCAV14udtD2uy0EEeIyuWvbP7O7eD2smX2yU3daTvcjjHFGPVoqn2nw+5pGXM93M36qtqE1cpUar1WqfUpLqi6DdaktHuuhJ8T9WWjXMWnbVo2tvGqdcUjRAL5RROppJYPrNkwAXeBzsAcknchWbrrgrDw30bHV33UNJFqmZ7HQ2KD94e6PtEuG+Rsc4DdiASSq3ori1WUlhs+kOHmm4LVqS4BsFbdHESSTS7+s0uzgYHMS7IbvgbZVSvXCPQNouclHrHidM7VU5BqZGR94yOQ/9xzg4/3nN+AWqnKVpJUm3GKecY5pNe5YUfIjSSrpzWr+CXx3ZizhdxFuXCnXVq1NayXTUcn72DOBUQu2kiPuc38iAfBdfOH+sqDV+nbZerXP6Rb6+BlTTyeJY4ZGfeNwR4EFchuJvDe4cMdRC21ksdXTzRiopK2Afu6iI9HDyI6Eb/EggrbL6Pjiu6ajuug62bL6TNxtwcf/AGnECaMfBxa8D+Nyl3cYV6Sr09fobLGpKjUdCfX5nQyhqA9gVTY79Vatnq+YAZ6q5IH5aAqM6AmkXxpyMr6gCIiAIiIAiIgCIiAL4TgZX1eXnZAS87sNWmX0kXEt2neFVu0pTS8lVqOrxMAd/RYMPf8AJzzEPkVuPWScjCT0XKH6QTWrtU9oSqtjH81Np+hhoGt8BI4d9L+sjR+FTrKn4lZZ6akC+qeHQeOuhrjQyxQV1PLUQmpgZK18kHNy940EEtzvjI2z71nE2jhFxY3ttXLw7vsh2panDqN7j4Ak8v5Fp9ytrgxouxVlt1DrHVcT6rT+n2MJomf/ACp3eyw9MjptncuGdgVemgNKaBrNCftbVFkdT0+p9QyUNsdG8mWiZghoa8Y9UOyCcEdNsKZeV45bi5Jxwsx7vXGHvhalLQpvCzjD7/XoemaKrOzjoDVd5rqulnvt3DbTaaijeXARPHM+UZAIOMn8I81WuwtwnbqPVtZrKuh5qKyn0ehDhkOqnN3f+Bh/N48lgbiTY7jojUtw0nV19RW0lpnd6Mx7yWcrmghzWZw0lvLkDxC6XdnHh2OHvCzTlmdGG1badtRV7dZ5fXkz8CeX8IWqTdKg5uXNKp120xp+3zJVvBVa6XLhQ6e37+Rl6x24Brdv0V6UFKGNG26pdnpeUDZXHDHytVUX5EYzGwUYDC+NHKF9QBEXlzsdOqAOdj4qE+Tl67rzJKGDqrW1trqz6E09XXy+XCG2WqiZ3k9VUOw1o8APEknYNGSTsF6lnRHjeNWV+ruMNHBLPPKyCGJpfJJI4Naxo6kk7ADzKg013p62COennjnglaHxyxPD2Paeha4bEHzC5P8Aai7YF8471k9ltJnsuho3+pRF3LNXYO0lRjw8RF0HjzHpW+xl2qZOFNzj0bqarP8AQ6ul/wCWqJHbWydx6+6F59ofVPrdC5WLsaip8/XsVqv6bq8nTudUY6gO8VGBDgrUt937wNIIIO4IOQR7lcFLUiRoOVWlmRKmEOaVivjhwqoeLPD29aXrg1ja6EiCcjeCdu8Uo+64D5EjxWWzhzSqZcacSMKyTcWmjGSUk09jjVwOqmcOuOlBTaiYKGelqJ7bUd7sIJyDHvnoOYYz5OVu8U9BX7Quqriy80sxZPVSyQ1rgTHVAuLuYO6E4O46hZr+kD4ct0jxqZfaeIMo9S0gqnYG3pMeI5fzHdu/EVRbDoqycYdEW6CTiXcG1NmofS6i3XKETR0GQGyEPIaSwYHi7AwrmdVUpxu2/RksPRvbONva8HMuk3zW/VPK1++hZ/FnVlnvOgeHFottwbdKu1297auYNc0xOPKO7IcM5HKfkAfFUDg1ryThnxQ05qNri2Gkq2ipAPtU7/UlB/C4n5BXqOzBcbs0u03q7TmogG8wZBUljyPgObH5rDE8DopJYZWlr2OdG9p6gg4I/mpNrK3nTdKlLO+e+rb9hoq+LCaqSWP6O3Gn60PY0seHtIy1w8R4FXtQy8zAQtbOyvrR+tOC2kbjLJ3lS2jFHO49TJCTEc/EMB+a2HtUvMwLnpRcJOL6HWwkpxUl1K4wr2oUZzhRVgZBERAEREAREQBERAF4k6r2oUn1kBTa45ABOxIBXEDi5qR2seKusb253P6fd6qZp/h71wb/AIQ1dqdaXAWrT10ricCmpJ58j+CNzv8ARcKWyGZokd7Txzn4nf8A1V1w2OspeRR8UlpCPmZX4K6ysFPadRaL1ZM+jsV/awiuZ/8AGmb7LjscDZpz0BbvsSrvs3CnSOgbhR32/wDEi33WxW+YVlNb6J3M+eRpy31A92+QM8o36EgLXlfA0A5AAPmApNWzc5ylCo4qW607Y0zs8FZC4UUlKKeNvvqZU07UP44dou1SzwFkV4vMTnQnfkgYQeU/COPf5rqxYIOYh2BvvhcyuxTa23Hj7bJXNyKOhq6ke48gYP8AOuoen4sNbsq6+ShKNOO0UXXDsunKb3bLvtsXLGNsKrxjcKRomENCqDBtlVpanpEXhz/JAHO8AoEsoaCcr5NMGhYr448d9NcD9JyXrUFSSXkx0dBAQaitlA9iMH9XHZo3PgDlGLk8LcxlJRXNLYq/Fbi1p7hLpOr1DqOvbRUEPqtA9aWeQj1YomdXvPgB8TgAlcou0R2ktRdoPUYnri63aepXk2+yxvyyHw7yQ/XlI6u6Do3A60PjZxx1Lx31a+9agnDII+ZlDbYXH0eijJ9lgPVx25nndx8hgDHq6O1tFRXNLWXyOZu7x1nyR0j8wnxU7Zbc+8Xm30EYzJVVMUDR73PDf9VmDtBcBX8PquS+WKJ0umpX4kjGXOonk4APiYyehPQ7HwJ31LmnSqxozeHLYhRpTnBzitEZv7FPageHUXDzVNZ67QIrLXzO9oeFK8nxH1Cevs/ZW+lpuQcBv1XDFj3Rva5rnMe0ghzTggjoQfAroz2O+0//AMS7WzTGoqkf0toIssmecG4wt/8AcH9o0e2PH2h44q7y15f9sNupd2N3zLwp79DdiCcSNG6VDeZiodquIcwb7Ks96Hs65VOXRpp9JFpBtz4P2y+NjzPZrtHl2NxFO0xu+XMI1qL2XrFVT6jvF4nkpqfTVPQTUd0nqZwwNbKz1dj93OTge/Oy6Gdsq0NvXZx1/ERl0Nv9Kb96KRkg/wApXI9tbURUs9IyeRlLM9r5IGvIZIW55S4dCRk4z0yrmhCVxayop46e772OfvGqNzGo1nQzJe+Lti4dWuXT3C2k9GDhyVWpqhgNVUkeMZIyB5EgAfVaOqwtLK+aR8kj3SSPcXOe85LiTkknxJXlFZ0LeFuny6t7t7vzKqpVlUeuy6dDfv6PHUBquHV9tTnZNvu3eNGejZo2u/zMct3bLLkN3wuc/wBHVcSzUGtqHmwH01JUAfdfI0/5guh9jdkMXP3keWvI6iylzUIl2RHLVMKVp/Z+Smh0UMmhERAEREAREQBERAFCk8VFUKTxQGPOM0xi4X6vc3Yts1afn6PIuIUP9TH9wfyXcTitROruH2p6do5nTWmsjA8yYHgLh1B/URfcb/JXvDdpe4oOKetD3ntERXJRmyfYJhD+Mtyf4sssxHzliC6W2BuWNXMjsI1gpuOMkJODUWipYPeQ6N3+hXTewuwxgXNX/wCf7kdTw/8AI97L0o/ZCnGuACkaV2GBTDpgAq4siK5+3kFLTVAaDuoM9YGDc/qteu092r7JwGs5pou7u2rquPmorSH7MB6TTkbtj8h7T+g2yRnCEqkuWK1MJzjTi5SeEXD2iu0lp7gHpn0y5PFbeKprhbrPC/EtS4fWJ+pGD7Tz8Bk7LlDxR4p6i4w6uqdRalrTVVkvqRRMy2GmizkRRN+q0fmTuSSqdrfXF84j6nrdQajuElzu1W7Mk0mwAHssY0bNY0bBo2CoS6W2to0Fl6s5a6u5XDwtIhERTiAZC4AWj9tcYtMQlvMyGoNU8HyjY5/8wFvjV0kFfSTU1VCyop5mGOWKVoc17SMEEeIK1E7Htp9L4iXOvLctora4A+TpHtb/ACDluAvnvHanNdKK/Sl9TpuHQxRz3ZpJx54Gz8M7iblbGPn0zUvxG8+s6keekTz5fZd49DuN8X2W9V+nLvR3W11clDcaOVs9PUwnD43joR/t4jIOxXSG6WukvduqaCvpo6uiqYzFNBKMte09QVo/xv4LVfCq8Can7yq07VvIpap27o3de6kP2h4H6w94Ku+FcTVyvArv0unt/v5kG8tHSfi09vkdBezD2i6HjVpMPlMdJqSga1lyoGnABOwmjH/bd/hOWnwzsFTXIOYBn5ridw74g3nhfq6h1FYqjuK6ldux2e7mjPtRSDxa4bH5EbgLpRp3tWaKrOFLNc1lybQUTR3U9E9wfUx1IGTTtYN3uPUEbEYdkDOM7q1dKWYLRlhaXaqwxN4aL+7SVXC7gXr/AL+RkcbrHVt5nuDRkxkNGT4k4A8yQFx1HRZi7QnaY1Fx5uvdTF9q0vTyc9JZo35BI6STEe3J+jfAeJw6rWzoSowfNuynvbiNeacNkEQEEZBBHmEU8rzaf6Pd5HEvU7PB1oYT8p2/7rpHYXHDSucf0edMX6+1bUY9WO1wx597p8//AFK6N2EHDQuYvvz37jqrD/517/mXdTHLQptpy0KUpQQ0KbaMNCgFifUREAREQBERAEREAUKT6yirxJ1QFBvdMKynkp3exK0xn4OGP9Vwou9ufZ7tX0Eg5ZKSolp3DyLHlp/ku8Fxb6hI69Vxr7VWlDo3tDa6oAzu4Zbg6uhGMAxzgSjHze4fJXHDpYlKJS8TjmEZdjFCIivjnjLXZSvosHaA0jK93JHVTyULj/5YnNH+LlXVuw1HqNXFeyXifT15t91piRUUNRHVR4+0xwcP5LsBpTVNLeLNRXamlaaOsp2VcbyQAI3tD858MA/oqHiMMTjI6Lhk04Sh2ZlWCva2MZOFhnjj2u9C8Daptuu1VUXK+Obz/sm1sbJNG3wdKSQ2PPgHHJ64wtcu0f28RbmVWmuGlSyes3jqdRgB0cJ6FtMDs539ofVH1Qeo0WrKye41c9VVzy1VVO8yyzzvL5JHk5LnOO5J8ysbexc/SqaLse3N+qb5KWr7m7GuvpMKyvt9TBpTR37PqpGFsddd6sTd0T0cImNAcR5F2PPK0wvt+uOqLzWXa71s9yudZIZqirqX88krz4k/6dANhgKQRXNKhTo+oikq3FSt67CIqvpPStx1rqGistqh76tqn8rc+ywdXPcfBrRuStspKCcpPCRpScnhblIRbbUvY0062mjFTqC6y1AaOd8TImMJ8cNLSQPiUf2NNOE+rqG7tHvjhP8A9VR/5uy/6fwZYf4+v2/cl+xlZu505qS6lu9TVx0zTj6sbC4/rItilbXDzQNu4a6YhslsfNNAyR8rpqggvke45c44AA6AYHgFcq4W+rq5uJ1Y7Pby2Oht6bpUowfQKn3+wW/VFnq7VdKVlZQVTOSWF/QjwIPgQdwRuCFUEUNNxeVub2k1hmhHGPhBcOFF+7pxfV2apcTRVxHtDxY/yePHzG492Pv/AOrPXa218b5q6m01TSZo7O3nnDTs6peNwfuswPi5ywKvqthUq1baE63rNf8Ahx1zGEKsow2CvLhDog8QuIVps7ml1IZO/qyPCBnrP/PZv4lZq2z7H+iv2fpu5annjxPcZPRaYkbiGM+sR95/+Ra+I3P4W2lNb7Lzf3kztaXjVVF7dSH2jeAcd3pptU6Zomx18LM1tvpmACeNo/rGNH12gbge0B5jfVAHIyNwunPRYK4o9li06vrKi6afqm2K5zOMkkD2c1LK87k4G8ZJ+zke5c1wvi6pR8G5enR/wy1vLJzfiUt+qKh9HZaCKTWtzLfVfPS0jT91r3n/ADNW/djbgMWsPY+4YV/DLhvJQXVkLblVXKepl7iTnaW+qxhDvEcrM/NbTWWPAGyl3FSNWrKcXlMsLWDp0Yxe5cVOPVU0OgUvCMNUwoxKCIiAIiIAiIgCIiALzJ0C9L44ZCAp9azmaVzc+ks0C636y0vrCGPENwpX2yoeBt3sJ548/Fj3D8C6VTty1YB7XvCl3FbgpqC100Pe3WkYLlbwBuZ4cu5B95nOz8QUq2qeFVUnsRLqn4tGUVuchEQHIBGcHfdF1hx4V/3Ljjq248NLXoUV5pbDRRuieyDLZKphcXNZK7O7G5wGjAOBnKsBFhKMZY5lsZxnKOeV7hERZmAREQHqON0sjWMa573ENa1oyXE7AAeJJW7vZ94Os4aae9NuMTTqO4MBqCd/R2dRCD7urj4nboAscdlvgz3r4dbXqD1G5Nqp5B1PQ1BH6M+bvJbQLhuNcR527ak9Fv59vcdDYWvKvFnv0CIi5IugiIgCoOvNXU+hNIXW/VOHMooS9kZP9ZIdmM+biB+ary1Y7X+vvSbhbtIUsn7umAra0NPWRwxEw/BpLvxBWFhbO7uI0+nXyI1zV8Gk5mu1wuFRdq+prauUzVdTK6aaQ9XPcSXH8ypdEX1VJJYRx25O2Sz1WobzQ2uibz1dbOyniH8TjgH4Dr8l0Y0xp6m0np222ajH/LUEDKdh+1yjd3xJyfmtUeyPoz9ta4q7/NHmms8OIiRsZ5AWt/JnOfmFuCuE49c89ZUFtHfzf9fM6LhtLlg6j6hN/Dcoqlp6h9Pu0DCMsYe8d8B/+4XMQi5yUV1LgyfpG3+i0tPFjdjAD8fFZJtMXKwbK0rBTYaCr4t8XIwbbrrElFYQKhGOmyjLwwb/AAXtegIiIAiIgCIiAIiIAiIgIUjeoVIuNPzNJHUbgqtPGQpSpj5mlAcgO2RwXdwh4vVstHT91p6/OfcKAtHqxuLv30P4XnIH2XtWCF2E7TfA2l44cN66xu7uC6wn0q11bxtDUtBxk/YeCWO9xz4BckZdJXuLUVVYHWmsde6WZ1PPQRwufLHI04c0tA8D49PFdLaXCqU8SeqOWvbd0qmYrRlJRZr0f2UNYag5Jbs6n05SncipPez4/wDG04H4nBZw0f2XdE6YEctZTS6hq2795cXfu8+6JuG/nlRbjjFpQ05uZ+z67GNOxrVOmF7TTzTmj75q+Z0VktFZdXt9r0WEva34u6D5lU2so57fVzUtVBJTVMLzHLDM0texw6gg7grpbS0kFDTMp6aCKmp2DDYYWBjG/Bo2CxRx14E0vE2hdcra2Ok1NAzDJT6rKpo6RyHz+y7w6HbpW0OPxqVuWrHli+v1JdThrjDMHlmkaylwE4PycUNRmetjc3TtA4Oq39O+d1bC0+Z6uPg33kK2NLcM79qjXMelWUUtFcmyFtSKmMt9FYPakePIDp5kgDqt89G6Qt2hdN0VktcXd0lM3HM72pHHdz3Hxc47n8ugUvivElbU+Sk/Sl+y7/Q0WVq6suaa0RWIYY6eGOKJjYoo2hjI2DDWtAwAB4ADZekRfPDpwiIvAEREBTtR36k0tYLheK53JR0MD55feGjoPeTgD3lc6tSX+r1Vf7jeK53NV107p5PcSdmj3AYA9wWyva+4gtp7fQ6PpJgZqgisrw07tjb/AFTD5Zd62PJo81qwT4rvuBWvhUXXktZbeX9nN8Rrc81TXT5hXtwx4SX3inczDbYu4oInAVNymae5h938TvJo+eBur34LdnCu133F4v4ltmnjh8cY9WesH8P2GH7R3Ph5rb6zWWg07bKe3WykioaGnbyxQQN5WtH+/mTufFZcR4xC3zSoay79F9WeWti6vp1NF8yicOeHdq4ZacZaLUJHtL+9nqJjmSeQgAudjYbAAAbABXQiLg5zlUk5zeWzo4xUUox2QV/aEsxjg797fXmwR7m+H+6tSwWh13r2sIPcswZD7vL5rMlitwa1uwAHQKzsaOX4svcZFfstJyhuyumnjDWjCp9upe7aNlVo2bAK5BFaMBfURAEREAREQBERAEREAREQBQns8FFXxwyEBSa6l7xpWHOIvD2J81TeLbSRx18hDqvuow19QAAA4kbucAAN/Ae5Zylj5h03VHuND3jTgZWupTVWLgwaqD3Isma84eudJJX22P8AeH1pado9rzc33+Y8VjQggkEYI2IK5qrRlRlyyB8REWgHzkbzl/K3nIALsDJA6DPkvqIgCIiAIiIAsccbOMFJwp0+DH3dTfqxpFFSO3A8DK8fYb/iO3nis8T+JNt4X6Zlutee9mcTHSUbXYfUS42aPIDqT4D34WlEdNqvjnrqeWKJ9zu9WQ6Rw9WGnj6DJ6MjaNh/qSr/AIZw9XD8evpTj+/9dyuu7l0l4dPWTLaq6u4anvUlRO+e5XSum5nOwXyzSOPgB1J8AFs/wV7MMVpMF71lAyorgQ+C0uw6OE+Bl8Hu/h9keOT0v3g/wIs/C2nbVvLbnqF7cSXB7cCLPVkIPsj3+0fHA2WTlL4hxh1F4NrpHv38uyNFrYqP+yrq+w6IiLlS4Cj0VHLcKlkEDeaR35AeZ9y+0NBPcagQwM53HqfBo8yVkvS+lmW+INaOeV275CNz/sFMt7eVZ5ewJjS+nWUEDImDPi5xG7j5rIdpoA0DbGFK2m1huNum+SrmpacMaNl0cUorCBGgi5WhTLRgZ8SvLG/koi9AREQBERAEREAREQBERAEREAREQHlzc7jqpeWIOHvU0vLm53HVAUCvt7ZATjB8VjjWXDuC7udUQYpq3xeB6sn3h/qP1WX5IuYdFT6qgEgO35BYTpxqLlkgas3S0VlmqO5rIHQu8Cd2u+B8VJrY68aehroXRTwsmid1a8ZCxtfeFnK50lum7v8AsZt2/J3UfPKpatjOOtPVAx0iqFxsNwtJPpVLJG37YHM38wqf1Vc4uLxJYAREWICIiAwDxW4Aaj4ocUGXCovEEGmhCxkZJLpadoHrsZHjBLnZPNnG+/TCy/onQtl4e2VlrslG2mgB5pJCeaSZ/wBt7urj+g8AFX0U2reVqtONGT9GPRfyaIUIQm5pasIvTGOkeGsaXuP1WjJVat2j7hXEF8fo0Z8ZOv5KNCnOo8RWTeUPoq3ZdK1V1c17mmCnP1nD1nfAf6q87HoSnpHNe5hnlG/eSDp8B0CvOgsQGPVyrSjY9avwBQbDpiKhibHFHyNzuT1PvJ8VelstIaBsp2htQZjboVWIKYMA2VukorCBDpaURtAAwFPMZ4DojGKKBgL0ADAREQBERAEREAREQBERAEREAREQBERAEREB8c3mUJ8eeoUZEBIzUoeOmyptTa2vzsq8WeShuj8wgLPqrIHA+rt4q2LnoG3Vpc6Sjj5j9Zg5XfmFlF9MHKWkoGuz6qxlGM1iSyDClZwspiT3M08XuJDh+qpc3DCoaf3dYHffiI/kVnWW1NPhupeSzt8AFGdpRf6QYKPDWvB/6iH+65fW8Naw+1VRD4McVm82QE9B+SfsP3D8lj+Co9v3BhqHhmc/vauQjyZGB/NVWk4cUUeC6J8x/tH7fkMLKbbMB4D8lHZaGtWyNtRjtEFjUGloaUBsULIh5MaAq1S2INxhuce5XRHbGN+qpqOka0DZSEktECiUtnDcZGFVYKFrANlONhAUVsfyXoITIQ3wUZrPNeg0BfUAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREB8LAV5MfvXtEBCMfuXkxDyUdEBLmIHwQQtHgphEBA7oeX6L13ePBRUQEMRnPgF6DAPevSIABhERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQH//Z" alt="Global Geologica Pty Ltd logo">
+      <div class="brand-text">
+        <h1>Global Geologica Pty Ltd</h1>
+        <p>Mining Business Unit &mdash; Task Dashboard</p>
+        <p class="header-status-chip" id="headerStatusChip"></p>
+      </div>
+    </div>
+    <div class="source-panel">
+      <div class="src-line"><span class="src-dot" id="srcDot"></span><span id="srcLabel">Loading source data&hellip;</span></div>
+      <div id="srcMeta">&nbsp;</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+        <button class="btn" id="printBtn" title="Print this dashboard or save it as a PDF">Print / Export PDF</button>
+        <button class="btn" id="avatarModalBtn" title="Add or update assignee photos">Assignee photos&hellip;</button>
+        <button class="btn" id="retryFetchBtn" title="Re-check the linked CSV file">Re-check source</button>
+        <button class="btn primary" id="loadFileBtn">Update data&hellip;</button>
+      </div>
+      <input type="file" id="fileInput" accept=".csv,text/csv">
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="tabs" id="tabGroup">
+      <button class="tab-btn active" data-period="week">Week to date</button>
+      <button class="tab-btn" data-period="month">Month to date</button>
+      <button class="tab-btn" data-period="year">Year to date</button>
+    </div>
+    <select class="period-select" id="periodSelect"></select>
+    <div class="period-note" id="periodNote"></div>
+  </div>
+
+  <div class="headline" id="headlineBar"></div>
+
+  <div class="kpi-row" id="kpiRow"></div>
+
+  <div class="charts-row">
+    <div class="chart-card">
+      <h3 class="chart-title" id="donutTitle">Status mix</h3>
+      <p class="chart-subtitle" id="donutSubtitle"></p>
+      <div class="donut-wrap">
+        <div id="donutChart" style="width:180px; flex:none;"></div>
+        <div class="legend" id="donutLegend"></div>
+      </div>
+    </div>
+    <div class="chart-card alt">
+      <div class="compare-header">
+        <div>
+          <h3 class="chart-title" id="compareTitle">Week-on-week comparison</h3>
+          <p class="chart-subtitle" id="compareSubtitle"></p>
+        </div>
+        <span class="delta-chip flat" id="deltaChip">&mdash;</span>
+      </div>
+      <div id="compareChart"></div>
+      <div class="legend" id="compareLegend" style="flex-direction:row; gap:16px; margin-top:6px;"></div>
+    </div>
+  </div>
+
+  <div class="trend-row" id="trendRow">
+    <div class="chart-card">
+      <h3 class="chart-title" id="trendATitle">Trend</h3>
+      <p class="chart-subtitle" id="trendASubtitle"></p>
+      <div id="trendAChart"></div>
+    </div>
+    <div class="chart-card alt" id="trendBCard">
+      <h3 class="chart-title" id="trendBTitle">Trend</h3>
+      <p class="chart-subtitle" id="trendBSubtitle"></p>
+      <div id="trendBChart"></div>
+    </div>
+  </div>
+
+  <div class="charts-row">
+    <div class="chart-card client-card">
+      <h3 class="chart-title" id="clientTitle">Client shares</h3>
+      <p class="chart-subtitle" id="clientSubtitle"></p>
+      <div id="clientChart"></div>
+    </div>
+    <div class="chart-card alt client-card">
+      <h3 class="chart-title" id="areaTitle">Work by area</h3>
+      <p class="chart-subtitle" id="areaSubtitle"></p>
+      <div id="areaChart"></div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Recent updates</h2>
+  <p class="section-caption" id="recentCaption">Tasks starting in the selected period. Click a column header to sort.</p>
+  <div class="table-card">
+    <div class="table-scroll">
+      <table class="data-table" id="recentTable">
+        <thead>
+          <tr>
+            <th class="sortable" data-sort="status">Status<span class="sort-arrow"></span></th>
+            <th class="sortable" data-sort="workstream">Task<span class="sort-arrow"></span></th>
+            <th class="sortable" data-sort="area">Area<span class="sort-arrow"></span></th>
+            <th class="sortable" data-sort="client">Client<span class="sort-arrow"></span></th>
+            <th class="sortable" data-sort="assignTo">Assigned to<span class="sort-arrow"></span></th>
+            <th class="sortable" data-sort="start">Start<span class="sort-arrow"></span></th>
+            <th class="sortable" data-sort="finish">Finish<span class="sort-arrow"></span></th>
+            <th class="sortable" data-sort="remarks">Remarks<span class="sort-arrow"></span></th>
+          </tr>
+        </thead>
+        <tbody id="recentBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <h2 class="section-title">Unscheduled backlog</h2>
+  <p class="section-caption">Upcoming work with no start date assigned yet. Click a column header to sort.</p>
+  <div class="table-card">
+    <div class="table-scroll">
+      <table class="data-table" id="backlogTable">
+        <thead>
+          <tr>
+            <th class="sortable" data-sort="workstream">Task<span class="sort-arrow"></span></th>
+            <th class="sortable" data-sort="priority">Priority<span class="sort-arrow"></span></th>
+            <th class="sortable" data-sort="client">Client<span class="sort-arrow"></span></th>
+            <th class="sortable" data-sort="area">Area<span class="sort-arrow"></span></th>
+            <th class="sortable" data-sort="notes">Remarks / dependencies<span class="sort-arrow"></span></th>
+          </tr>
+        </thead>
+        <tbody id="backlogBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <p class="footer">Global Geologica Pty Ltd &middot; Mining Business Unit Dashboard &middot; data refreshes from the linked CSV export</p>
+
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="avatarModalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Assignee photos</h3>
+      <button class="modal-close" id="avatarModalClose" aria-label="Close">&times;</button>
+    </div>
+    <p class="modal-desc">Upload a photo for each team member to show their avatar in Recent updates. Photos are held in this browser tab only &mdash; use Export to save your set as a file and Import to reload it next time you open the dashboard.</p>
+    <div class="avatar-manage-list" id="avatarManageList"></div>
+    <div class="modal-actions">
+      <button class="btn btn-small" id="exportAvatarsBtn">Export photo set&hellip;</button>
+      <button class="btn btn-small" id="importAvatarsBtn">Import photo set&hellip;</button>
+      <input type="file" id="avatarSetInput" accept="application/json" style="display:none">
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   EMBEDDED SNAPSHOT OF tasks_rev1.csv
+   Used automatically if the browser blocks loading the file
+   directly (this happens when the dashboard is opened via
+   double-click as a local file:// page). Click "Update data"
+   at any time to load a newer export.
+   ============================================================ */
+const EMBEDDED_CSV = `Client,Workstream,Priority,Area,Assign To,Start,Finish,Duration,Status,Remarks,Week,Risks and Dependencies,Month,Year
+Internal,Pit or Dump Design procedure,3,Procedure,Glen,16-Feb-26,24-Feb-26,8,Completed,Completed,8,"Multiple versions, non compliance, errors",2,2026
+Internal,Pseudoflow Algorithm for Pit Optimization procedure,3,Procedure,Glen,16-Feb-26,24-Feb-26,8,Completed,Completed,8,"Multiple versions, non compliance, errors",2,2026
+Internal,D&B QA/QC SOP,3,Procedure,Glen,28-Feb-26,1-Mar-26,1,Completed,Pending Site Management approval,9,Governance dependency,2,2026
+CUF Orlando,Orlando Pit Optimization,1,Optimization,"Glen, Steph",28-Feb-26,3-Mar-26,3,Completed,Main pushback RF1.00 (best margin),9,Governance dependency,2,2026
+TML Golden Kangaroo,Golden Kangaroo Pit Optimization,1,Optimization,"Glen, Steph",28-Feb-26,3-Mar-26,3,Completed,Starter RF0.75; Main RF1.00; Ext RF1.25,9,Governance dependency,2,2026
+Internal,Mine Dev & Prod Recon SOP,3,Procedure,Glen,28-Feb-26,1-Mar-26,1,Completed,Workflow forwarded to all concerned for feedback and inputs,9,Governance dependency,2,2026
+CUF Gecko,Gecko Pit Optimization,2,Optimization,"Glen, Steph",28-Feb-26,3-Mar-26,3,Completed,Awaiting 230GB block model; sanitize parameters suggested to compress file,9,Optimization input dependency,2,2026
+Internal,Mine Reconciliation procedure,3,Procedure,Glen,11-Mar-26,12-Mar-26,1,Completed,Completed,11,"Multiple versions, non compliance, errors",3,2026
+Internal,Deswik License Management and Usage Scheduling procedure,2,Procedure,Glen,11-Mar-26,12-Mar-26,1,Completed,Completed,11,"Multiple versions, non compliance, errors",3,2026
+Internal,Drill and Blast QAQC procedure,2,Procedure,Glen,11-Mar-26,12-Mar-26,1,Completed,Completed,11,"Multiple versions, non compliance, errors",3,2026
+Internal,Grade Control procedure,3,Procedure,Glen,13-Mar-26,15-Mar-26,2,Completed,Completed,11,"Multiple versions, non compliance, errors",3,2026
+Internal,Void Management procedure,3,Procedure,Glen,13-Mar-26,15-Mar-26,2,Completed,Completed,11,"Multiple versions, non compliance, errors",3,2026
+Internal,Pit Optimization Validation procedure,2,Procedure,Glen,14-Mar-26,16-Mar-26,2,Completed,Completed,11,"Multiple versions, non compliance, errors",3,2026
+Internal,Mine Reconciliation PPT for GG Clark,2,Presentation,Glen,17-Mar-26,24-Mar-26,7,Completed,Presented during the Weekly Technical and Toolbox meeting in Clark dated Mar 24,12,"Demo failure, unanswered questions and incorrect conclusions",3,2026
+TML Warrego,Re-run Warrego Pit Optimization,1,Optimization,"Glen, Steph",19-Mar-26,23-Mar-26,4,Completed,"Sent by Steph dated Mar 21; Per Steve, BM requires revision to extend its extent to work with correct tonnage",12,Optimization input dependency,3,2026
+CUF Orlando,Re-run Orlando Pit Optimization,1,Optimization,"Glen, Steph",19-Mar-26,23-Mar-26,4,Completed,Sent by GRR dated Mar 22; for review of Steve,12,Optimization input dependency,3,2026
+CUF Gecko,Re-run Gecko Pit Optimization,1,Optimization,"Glen, Steph",19-Mar-26,23-Mar-26,4,Completed,Sent by GRR dated Mar 21; for review of Steve,12,Optimization input dependency,3,2026
+Internal,"Pit Optimization Validation procedure, revised",2,Procedure,Glen,20-Mar-26,24-Mar-26,4,Completed,Completed,12,"Multiple versions, non compliance, errors",3,2026
+Internal,Drill and Blast Design and Engineering Process,1,Procedure,Glen,23-Mar-26,31-Mar-26,8,In progress,In progress; conducting daily coordination with DB Engineer,13,"Availability of DB Engineer, non-compliance, unanswered questions, demo failure",3,2026
+Internal,Drill and Blast Design and Engineering training and familiarization,1,Training,Glen,23-Mar-26,7-Apr-26,15,In progress,In progress; conducting daily coordination with DB Engineer,13,"Availability of DB Engineer, non-compliance, unanswered questions, demo failure",3,2026
+TML Golden Kangaroo,Re-run Golden Kangaroo Pit Optimization and Revenue Factor (RF) at 0.25 increment between 0.25 and 2.00,1,Optimization,Glen,24-Mar-26,26-Mar-26,2,Completed,Completed,13,Accessibility and availability of Deswik sofware; input dependencies,3,2026
+TML Golden Kangaroo,Re-run Golden Kangaroo Pit Optimization and Revenue Factor (RF) at 0.01 increment between 0.50 and 0.75,1,Optimization,Glen,26-Mar-26,27-Mar-26,1,Completed,Completed,13,Accessibility and availability of Deswik sofware; input dependencies,3,2026
+OZL Eclipse,Eclipse Ozland Pit Optimization,1,Optimization,"Glen, Steph",5-Apr-26,13-Apr-26,8,In progress,Awaiting sanitized block model,14,Optimization input dependency,4,2026
+TML Kimberly Kid,Kimberly Kid Pit Optimization,1,Optimization,"Glen, Steph",5-Apr-26,7-Apr-26,2,In progress,In progress; updated BM sent for approval dated Apr 1,14,Optimization input dependency,4,2026
+ARCT Bidjovagge,Bidjovagge string to solid conversion of underground declinie,1,Others,Steph,5-Apr-26,6-Apr-26,1,Completed,Completed,14,Input dependency,4,2026
+TML Nobles Nob,Noble Nob Pit Optimization re-run,2,Optimization,"Glen, Steph",5-Apr-26,8-Apr-26,3,In progress,In progress; updated BM sent for approval dated Apr 1,14,Optimization input dependency,4,2026
+Internal,Drill and Blast Design and Engineering Process,1,Procedure,Glen,8-Apr-26,30-Apr-26,22,In progress,In progress; conducting daily coordination with DB Engineer,15,"Availability of DB Engineer, non-compliance, unanswered questions, demo failure",4,2026
+Internal,Drill and Blast Design and Engineering training and familiarization,1,Training,Glen,8-Apr-26,30-Apr-26,22,In progress,In progress; conducting daily coordination with DB Engineer,15,"Availability of DB Engineer, non-compliance, unanswered questions, demo failure",4,2026
+TML Kimberly Kid,Kimberly Kid Pit Optimization,1,Optimization,"Glen, Steph",8-Apr-26,8-Apr-26,0,Completed,Completed,15,Optimization input dependency,4,2026
+OZL Eclipse,Eclipse Ozland Pit Optimization,1,Optimization,"Glen, Steph",12-Apr-26,12-Apr-26,0,Completed,Completed,15,Optimization input dependency,4,2026
+OZL Eclipse,Eclipse Ozland Pit Shell Extent Projection,1,Others,Glen,12-Apr-26,13-Apr-26,1,Completed,Completed,15,Input dependency,4,2026
+Internal,Updating and generation of GIS Map Process,2,Procedure,Glen,14-Apr-26,14-Apr-26,0,Completed,Completed,16,"Input dependency, compliance",4,2026
+Internal,Drill and Blast Design and Engineering Process,1,Procedure,Glen,15-Apr-26,30-Apr-26,15,In progress,In progress; conducting daily coordination with DB Engineer,16,"Availability of DB Engineer, non-compliance, unanswered questions, demo failure",4,2026
+Internal,Drill and Blast Design and Engineering training and familiarization,1,Training,Glen,15-Apr-26,30-Apr-26,15,In progress,In progress; conducting daily coordination with DB Engineer,16,"Availability of DB Engineer, non-compliance, unanswered questions, demo failure",4,2026
+OZL Eclipse,Ozland Eclipse Optimization runs RF1.20 or less,1,Optimization,Glen,15-Apr-26,16-Apr-26,1,Completed,"50-meter extent, RF0.55 to RF1.20, target Au grade at 2.0 gpt, COG at 0.84 gpt",16,Input dependency,4,2026
+OZL Eclipse,Ozland Eclipse Pit Shell Extent Projection at RF1.00,1,Others,Glen,15-Apr-26,16-Apr-26,1,Completed,Pit shell selected by Steve at RF1.00,16,Input dependency,4,2026
+OZL Eclipse,Ozland Eclipse Optimization runs RF1.00 or less at 4koz output,1,Optimization,Glen,17-Apr-26,18-Apr-26,1,Completed,"70-meter extent, RF0.55 to RF1.20, target Au grade at 2.0 gpt, COG at 0.84 gpt, target metal output at 4koz",16,Input dependency,4,2026
+Internal,Orientation of newly hired employee (King Paje),1,Others,"Glen, Steph",20-Apr-26,20-Apr-26,0,Completed,"Overview of the mining services unit, work processes and procedures, etc.",17,Presentation materials,4,2026
+TML Golden Kangaroo,Review GK Pit Design of Strategic Mines and Reconcile,1,Others,Glen,21-Apr-26,21-Apr-26,0,Completed,"GG Au oz is 12koz versus SM Au oz at 6koz
+Different BM used (SM dated Apr 1, 2026; GG dated Mar 26, 2026)",17,Input dependencies and assumption,4,2026
+OZL Eclipse,Ozland Eclipse re-run resulting to material production (ore/waste) by 5m elevation,1,Others,"Glen, Steph",21-Apr-26,21-Apr-26,0,Completed,Material production by 5m elevation at 70m as per client request per Steve,17,Input dependencies and assumption,4,2026
+Internal,Drill and Blast Design and Engineering Process,1,Procedure,Glen,22-Apr-26,30-Apr-26,8,In progress,In progress; conducting daily coordination with DB Engineer,17,"Availability of DB Engineer, non-compliance, unanswered questions, demo failure",4,2026
+Internal,Drill and Blast Design and Engineering training and familiarization,1,Training,Glen,22-Apr-26,30-Apr-26,8,In progress,In progress; conducting daily coordination with DB Engineer,17,"Availability of DB Engineer, non-compliance, unanswered questions, demo failure",4,2026
+Internal,Pit Design process via Deswik SPD,1,Procedure,"Glen, Steph",22-Apr-26,30-Apr-26,8,Completed,"Pit design scenarios, model/field interrogation, output reports",17,Availability of reference materials,4,2026
+Internal,Pit Design process via Deswik SPD,1,Training,"Glen, Steph",22-Apr-26,30-Apr-26,8,In progress,In progress; review Deswik SPD,17,Availability of reference materials,4,2026
+OZL Eclipse,"Ozland Eclipse pit design of RF1.000 and RF1.213, analyses and recommendation",1,Design,Glen,23-Apr-26,23-Apr-26,0,Completed,"Advice of Steve via email dated April 23, 2026",17,Input dependencies and assumption,4,2026
+Internal,Drill and Blast Design and Engineering Process,1,Procedure,Glen,27-Apr-26,15-May-26,18,In progress,In progress; conducting daily coordination with DB Engineer,18,"Availability of DB Engineer, non-compliance, unanswered questions, demo failure",4,2026
+Internal,Drill and Blast Design and Engineering training and familiarization,1,Training,Glen,27-Apr-26,15-May-26,18,In progress,In progress; conducting daily coordination with DB Engineer,18,"Availability of DB Engineer, non-compliance, unanswered questions, demo failure",4,2026
+Internal,Pseudoflow Training of Junior Mining Engineer,1,Training,Glen,27-Apr-26,30-Apr-26,3,Completed,Pseudoflow training using Kimberly Kid Project,18,Presentation materials,4,2026
+Internal,Integrated Planning process via Deswik IS and Sched,1,Procedure,Glen,27-Apr-26,15-May-26,18,In progress,In progress; review Deswik IS and Sched,18,Availability of reference materials,4,2026
+TML White Devil,"White Devil Dump Design from Starter Pit to Stage-1, analyses and recommendation",1,Design,Glen,1-May-26,5-May-26,4,Completed,"Dump design from existing data from Maya, Stephanie and Clinton",18,Input dependencies and assumption,5,2026
+Internal,Pit design training of Junior Mining Engineer,1,Training,"Glen, Steph",1-May-26,15-May-26,14,In progress,Pit design training using Kimberly Kid Project,18,Presentation materials,5,2026
+Internal,Drill and Blast Design and Engineering Process,1,Procedure,Glen,4-May-26,31-May-26,27,In progress,In progress; conducting daily coordination with DB Engineer,19,"Availability of DB Engineer, non-compliance, unanswered questions, demo failure",5,2026
+Internal,Drill and Blast Design and Engineering training and familiarization,1,Training,Glen,4-May-26,31-May-26,27,In progress,In progress; conducting daily coordination with DB Engineer,19,"Availability of DB Engineer, non-compliance, unanswered questions, demo failure",5,2026
+Internal,Pit Design Training of Junior Mining Engineer,1,Training,Glen,4-May-26,8-May-26,4,In progress,Pit design training using Kimberly Kid Project,19,Presentation materials,5,2026
+Internal,Integrated Planning process via Deswik IS and Sched,1,Procedure,Glen,4-May-26,15-May-26,11,In progress,In progress; review Deswik IS and Sched,19,Availability of reference materials,5,2026
+TML White Devil,White Devil Revised Dump Design from Starter Pit to Stage-1,1,Design,"Glen, Steph",5-May-26,15-May-26,10,Completed,Revised dump design based on given parameters by Steve,19,Input dependencies and assumption,5,2026
+OZL Star of the East,Ozland Star of the East pit optimization runs and analyses,1,Optimization,Steph,7-May-26,8-May-26,1,In progress,Completed; subject to review,19,Input dependencies and assumption,5,2026
+TML Kimberly Kid,"Kimberly Kid Pit Optimization re-runs, analyses and recommendations",1,Optimization,King,11-May-26,15-May-26,4,In progress,Re-runs based on advise of Steve,20,Input dependencies and assumption; assignee under study,5,2026
+Internal,Drill and Blast Design and Engineering Process,1,Procedure,Glen,11-May-26,31-May-26,20,In progress,In progress; conducting daily coordination with DB Engineer,20,"Availability of DB Engineer, non-compliance, unanswered questions, demo failure",5,2026
+Internal,Drill and Blast Design and Engineering training and familiarization,1,Training,Glen,11-May-26,31-May-26,20,In progress,In progress; conducting daily coordination with DB Engineer,20,"Availability of DB Engineer, non-compliance, unanswered questions, demo failure",5,2026
+Internal,Pit Design Training of Junior Mining Engineer,1,Training,Glen,11-May-26,15-May-26,4,In progress,Pit design training using Kimberly Kid Project,20,Presentation materials,5,2026
+Internal,Integrated Planning process via Deswik IS and Sched,1,Procedure,Glen,11-May-26,15-May-26,4,In progress,In progress; review Deswik IS and Sched,20,Availability of reference materials,5,2026
+Internal,Draft of Drill and Blast Design and Engineering Process,1,Procedure,Glen. King,18-May-26,22-May-26,4,Completed,Draft completed by King,21,"Availability of DB Engineer, non-compliance, unanswered questions, demo failure",5,2026
+Internal,Drill and Blast Design and Engineering training and familiarization,1,Training,"Glen, Steph",18-May-26,31-May-26,13,In progress,In progress; conducting daily coordination with DB Engineer,21,"Availability of DB Engineer, non-compliance, unanswered questions, demo failure",5,2026
+Internal,OPDB Training of Junior Mining Engineer,1,Training,Glen. King,18-May-26,22-May-26,4,In progress,Pit design training using Kimberly Kid Project,21,Deswik OPDB hoarded by Kevin,5,2026
+Internal,Integrated Planning process via Deswik IS and Sched,1,Procedure,Glen,18-May-26,31-May-26,13,In progress,In progress; review Deswik IS and Sched,21,Availability of reference materials,5,2026
+TML Juno,Revised WRD design and volume calculations for Juno Project (for GIS Map updates),1,Design,Glen,21-May-26,21-May-26,0,Completed,WRD revised design and volume calculations,21,Availability of reference materials,5,2026
+TML Tenant Creek Dist,TML 5-Year LOM mine and mill revised schedule,1,Others,"Glen, Steph",22-May-26,22-May-26,0,Completed,Reformat template of LOM schedule,21,Reference materials and inputs,5,2026
+Internal,OPDB Training of Junior Mining Engineer,1,Training,Glen. King,25-May-26,29-May-26,4,In progress,OPDB training using Nobles Nob Project,22,Deswik OPDB hoarded by Kevin,5,2026
+Internal,Integrated Planning process via Deswik IS and Sched,1,Training,Glen,25-May-26,29-May-26,4,In progress,IS training using sample working project,22,Presentation materials,5,2026
+Internal,Integrated Planning process via Deswik IS and Sched,1,Procedure,Glen,25-May-26,31-May-26,6,In progress,In progress; review Deswik IS and Sched,22,Availability of reference materials,5,2026
+Internal,OPDB Training of Junior Mining Engineer,1,Training,Glen. King,25-May-26,29-May-26,4,In progress,OPDB training using Nobles Nob Project,22,Deswik OPDB hoarded by Kevin,5,2026
+TML Nobles Nob,Noble Nob Dry Stacked Tails revised design and analyses,1,Design,Glen,27-May-26,27-May-26,0,Completed,Revised DST design in reference to the design of Barend,22,Inputs and assumptions,5,2026
+TML White Devil,"White Devil WRD re-design, volume estimates, analyses and PPT",1,Design,Glen,29-May-26,30-May-26,1,Completed,"Use RF2.0 Pseudoflow dated Feb 13, 2026",22,Inputs and assumptions,5,2026
+TML Nobles Nob,"Nobles Nob DST re-design, volume estimates, analyses and PPT",1,Design,Glen,29-May-26,30-May-26,1,Completed,Refer to Markus inputs and assumptions,22,Inputs and assumptions,5,2026
+Internal,GG SOP 001,1,Procedure,Glen,1-Jun-26,5-Jun-26,4,Completed,Updates on Mining Section of GG SOP 001,23,Reference materials and inputs,6,2026
+Internal,OPDB Training of Junior Mining Engineer,1,Training,King,1-Jun-26,5-Jun-26,4,In progress,OPDB training using Nobles Nob Project,23,Availability of reference materials,6,2026
+Internal,Deswik.OPDB procedure (Pass 2),1,Procedure,King,1-Jun-26,5-Jun-26,4,Completed,Deswik.OPDB documented procedure (pass 2),23,Availability of Deswik.OPDB hoarded by Kevin,6,2026
+Internal,Integrated Planning process via Deswik IS and Sched,1,Procedure,Glen,1-Jun-26,5-Jun-26,4,In progress,In progress; review Deswik IS and Sched,23,Availability of reference materials,6,2026
+TML White Devil,White Devil WRD and site development revised design and layout,1,Design,Glen,3-Jun-26,4-Jun-26,1,Completed,"Revision based on meeting with Steve and TML dated Jun 3, 2026",23,Inputs and assumptions,6,2026
+TML Nobles Nob,Nobles Nob DST and site development revised design and layout,1,Design,Glen,3-Jun-26,4-Jun-26,1,Completed,"Revision based on meeting with Steve and TML dated Jun 3, 2026",23,Inputs and assumptions,6,2026
+Internal,Integrated Planning process via Deswik IS and Sched,1,Procedure,Glen,8-Jun-26,13-Jun-26,5,In progress,In progress; review Deswik IS and Sched,24,Availability of reference materials,6,2026
+Internal,OPDB Training of Junior Mining Engineer,1,Training,King,8-Jun-26,12-Jun-26,4,In progress,OPDB training using Nobles Nob Project,24,Availability of reference materials,6,2026
+TML White Devil,White Devil WRD and site development revised design and layout,1,Design,Glen,11-Jun-26,13-Jun-26,2,Completed,"Revision based on email of Steve dated Jun 11, 2026",24,Inputs and assumptions,6,2026
+Internal,Research Global Metal Market Price trend and cost trends in Oceania and Americas,2,Others,King,15-Jun-26,19-Jun-26,4,Completed,Global metal price and cost trend research for upcoming projects,25,Availability of reference materials,6,2026
+Internal,Deswik Training of Junior Mining Engineer,1,Training,King,15-Jun-26,19-Jun-26,4,In progress,Training using White Devil Project,25,Availability of reference materials,6,2026
+Internal,Deswik.IS documented process,1,Procedure,Glen,15-Jun-26,19-Jun-26,4,In progress,Deswik.IS documented process,25,Availability of reference materials,6,2026
+TML White Devil,White Devil WRD and site development revised design and layout,1,Design,Glen,18-Jun-26,20-Jun-26,2,Completed,"Revision based on email of Steve dated Jun 18, 2026",25,Inputs and assumptions,6,2026
+Internal,Deswik.IS documented process (1st pass),1,Procedure,Glen,22-Jun-26,26-Jun-26,4,Completed,Deswik.IS documented process (1st pass),26,Availability of reference materials,6,2026
+ARCT Bidjovagge,Arctic Bidjovagge sanitize underground openings and convert to ArcGIS compatible files,1,Others,"Glen, Steph",22-Jun-26,26-Jun-26,4,Completed,Files from Ranee,26,Inputs and assumptions,6,2026
+Internal,Deswik Training of Junior Mining Engineer,1,Training,King,22-Jun-26,26-Jun-26,4,In progress,Training using White Devil Project,26,Availability of reference materials,6,2026
+Internal,Deswik Training - Deswik.IS,1,Training,Glen,22-Jun-26,26-Jun-26,4,In progress,Training using Deswik.IS and Deswik.CAD,26,Availability of reference materials,6,2026
+Internal,Deswik Training of Junior Mining Engineer,1,Training,King,29-Jun-26,3-Jul-26,4,In progress,Training using White Devil Project,27,Availability of reference materials,6,2026
+Internal,Deswik Training - Deswik.IS,1,Training,Glen,29-Jun-26,3-Jul-26,4,In progress,Training using Deswik.IS and Deswik.CAD,27,Availability of reference materials,6,2026
+TML White Devil,TML Movies preparation and collaboration with Movies team,2,Others,Glen,29-Jun-26,3-Jul-26,4,In progress,Data generation and preparation for Movies requirements,27,Inputs and assumptions,6,2026
+ARCT Bidjovagge,Bidjovagge project pit optimization via Pseudoflow Algorithm,1,Optimization,Steph,6-Jul-26,10-Jul-26,4,In progress,Pit optimization of the project using Au-Cu parameters,28,Inputs and assumptions,7,2026
+Internal,Self-paced Deswik training,1,Training,"Glen, King",6-Jul-26,10-Jul-26,4,In progress,Self-paced training of Deswik applications,28,Availability of reference materials,7,2026
+TML White Devil,TML Movies dataset requirements,2,Others,Glen,6-Jul-26,10-Jul-26,4,In progress,For review by Movies team,28,Inputs and assumptions,7,2026
+TML White Devil,White Devil project revised pit and dump design (Starter Pit),1,Design,Glen,7-Jul-26,10-Jul-26,3,Completed,"East ramp for the existing pit design and revision of WRD1, for site feedback",28,Inputs and assumptions,7,2026
+Internal,Drill and blast PPT for Clark,2,Presentation,King,7-Jul-26,7-Jul-26,0,Completed,Drill and blast PPT c/o King,28,Availability of reference materials,7,2026
+TML White Devil,White Devil project drill and blast package (Starter Pit),1,Design,King,8-Jul-26,10-Jul-26,2,In progress,Starter pit design,28,Inputs and assumptions,7,2026
+TML Nobles Nob,Nobles Nob dataset conversion for Approvals,1,Others,Glen,9-Jul-26,10-Jul-26,1,Completed,In collaboration with GIS unit,28,Availability of reference materials,7,2026
+TML White Devil,TML White Devil drill and blast package,1,Design,King,13-Jul-26,17-Jul-26,4,In progress,,29,,7,2026
+TML White Devil,TML White Devil revised pit design,1,Design,Glen,13-Jul-26,13-Jul-26,0,Completed,,29,,7,2026
+TML White Devil,TML White Devil revised dump design,1,Design,Glen,13-Jul-26,13-Jul-26,0,Completed,,29,,7,2026
+Internal,Self-paced Deswik training,2,Training,"Glen, King",14-Jul-26,17-Jul-26,3,In progress,,29,,7,2026
+ARCT Bidjovagge,Arctic Bidjovagge pit optimization,1,Optimization,Steph,15-Jul-26,17-Jul-26,2,Completed,,29,,7,2026
+TML White Devil,TML White Devil scenes and notes for Movies,3,Others,Glen,20-Jul-26,24-Jul-26,4,In progress,Scenes and notes for Movies for review,30,Inputs and assumptions,7,2026
+TML White Devil,TML White Devil drill and blast package,1,Design,King,20-Jul-26,24-Jul-26,4,In progress,RL+330 drill and blast package,30,Inputs and assumptions,7,2026
+Internal,Self-paced Deswik training,2,Training,"Glen, King",20-Jul-26,24-Jul-26,4,In progress,,30,,7,2026
+TML White Devil,TML White Devil pit optimization (Cu mineralization),1,Optimization,Glen,23-Jul-26,26-Jul-26,3,In progress,From Au mineralization to Cu mineralization,30,Inputs and assumptions,7,2026
+TML Chariot,TML Chariot pit optimization (Au mineralization),1,Optimization,"Glen, Steph",26-Jul-26,27-Jul-26,1,In progress,Lack area constraints which requires BM extension,30,Inputs and assumptions,7,2026
+TML Chariot,TML Chariot pit optimization (Au mineralization),1,Optimization,"Glen, Steph",27-Jul-26,31-Jul-26,4,In progress,Lack area constraints which requires BM extension,31,Inputs and assumptions,7,2026
+Internal,Self-paced Deswik training,2,Training,"Glen, King",27-Jul-26,31-Jul-26,4,In progress,,31,,7,2026
+Internal,Mining business unit procedure updates,2,Procedure,Glen,27-Jul-26,31-Jul-26,4,Completed,,31,,7,2026
+TML White Devil,TML White Devil pit optimization (Cu mineralization),1,Optimization,Glen,28-Jul-26,31-Jul-26,3,In progress,From Au mineralization to Cu mineralization,31,Inputs and assumptions,7,2026
+TML White Devil,TML White Devil drill and blast package,1,Design,King,29-Jul-26,31-Jul-26,2,In progress,,31,,7,2026
+Internal,Self-paced Deswik training,1,Training,"Glen, King",3-Aug-26,7-Aug-26,4,In progress,,32,Availability of reference materials,8,2026
+ARCT Bidjovagge,ARCT Bidjovagge revised pit optimization,1,Optimization,Steph,3-Aug-26,3-Aug-26,0,Completed,Revised BM c/o 3D Modeling team,32,Inputs and assumptions,8,2026
+TML White Devil,TML White Devil drill and blast package,1,Design,King,4-Aug-26,7-Aug-26,3,In progress,,32,Inputs and assumptions,8,2026
+ARCT Bidjovagge,ARCT Bidjovagge historical stopeshells generation,1,Others,Glen,5-Aug-26,6-Aug-26,1,Completed,Historical drives and stopes solids,32,Inputs and assumptions,8,2026
+Internal,Mining business unit Loop updates,2,Procedure,"Glen, King",6-Aug-26,7-Aug-26,1,In progress,Uploaded MBU processes and workflows,32,Availability of reference materials,8,2026
+Internal,Unit dashboard improvements,3,Others,"Glen, King",7-Aug-26,7-Aug-26,0,In progress,Insertion of Assignee photos,32,Inputs and assumptions,8,2026
+Internal,Self-paced Deswik training,1,Training,"Glen, King",10-Aug-26,14-Aug-26,4,In progress,Continuous upskilling/familiarization of Deswik software,33,Availability of reference materials,8,2026
+ARCT Bidjovagge,ARCT Bidjovagge revised pit optimization,1,Optimization,Steph,11-Aug-26,12-Aug-26,1,Completed,Revised pit optimization runs,33,Inputs and assumptions,8,2026
+ARCT Hennes Bay,ARCT Hennes Bay underground dataset conversions,1,Others,Glen,12-Aug-26,13-Aug-26,1,Completed,Datasets for Deswik compatibility,33,Inputs and assumptions,8,2026
+ARCT Hennes Bay,ARCT Hennes Bay underground conceptual layout,1,Design,Glen,14-Aug-26,16-Aug-26,2,In progress,"Underground conceptual design based on meeting with ARCT technical personnel dated Aug 13, 2026",33,Inputs and assumptions,8,2026
+Internal,Self-paced Claude AI training,2,Training,"Glen, King",14-Aug-26,16-Aug-26,2,In progress,Company subscription of Claude AI platform,33,Resource planning risk,8,2026
+TML White Devil,TML White Devil drill and blast package,1,Design,King,17-Aug-26,21-Aug-26,4,Completed,Revised inputs and assumptions c/o Kevin Gocela,34,Inputs and assumptions,8,2026
+Internal,Self-paced Deswik training,1,Training,"Glen, King, Steph",17-Aug-26,21-Aug-26,4,In progress,Continuous upskilling/familiarization of Deswik software,34,Availability of reference materials,8,2026
+Internal,Self-paced Claude AI training,2,Training,"Glen, King, Steph",17-Aug-26,21-Aug-26,4,In progress,Continuous upskilling/familiarization of Claude AI,34,Resource planning risk,8,2026
+ARCT Bidjovagge,ARCT Bidjovagge pit optimization runs,1,Optimization,Steph,18-Aug-26,18-Aug-26,0,Completed,Revised pit optimization runs,34,Inputs and assumptions,8,2026
+ARCT Hennes Bay,ARCT Hennes Bay revised conceptual UG design,1,Design,Glen,20-Aug-26,22-Aug-26,2,In progress,Revised inputs and assumptions c/o Peter George,34,Inputs and assumptions,8,2026
+ARCT Bidjovagge,ARCT Bidjovagge UG solid block model,2,Others,Glen,20-Aug-26,22-Aug-26,2,In progress,Revised inputs and assumptions c/o Ranee,34,Inputs and assumptions,8,2026
+TML Tenant Creek Dist,Open pit mining cost model,2,Others,Glen,21-Aug-26,21-Aug-26,0,Completed,Back calculations of existing AUD 4.5 per tonne mining costs,34,Inputs and assumptions,8,2026
+ARCT Bidjovagge,ARCT Bidjovagge UG solid block model,2,Others,Glen,24-Aug-26,28-Aug-26,4,In progress,Revised inputs and assumptions c/o Ranee,35,Software accessibility and availability,8,2026
+TML White Devil,TML White Devil drill and blast package,1,Design,King,24-Aug-26,28-Aug-26,4,Completed,Revised inputs and assumptions c/o Kevin Gocela,35,Software accessibility and availability,8,2026
+Internal,Self-paced QGIS training,2,Training,King,25-Aug-26,28-Aug-26,3,In progress,Continuous upskilling/familiarization of QGIS software,35,Availability of reference materials,8,2026
+ARCT Hennes Bay,ARCT Hennes Bay revised conceptual UG design,1,Design,Glen,26-Aug-26,29-Aug-26,3,In progress,Revised inputs and assumptions c/o Peter George,35,Software accessibility and availability,8,2026
+Webbs Patch,Data and reference review,2,Others,Steph,26-Aug-26,27-Aug-26,1,Completed,"Reference materials shared by Leo Dagdag dated Aug 25, 2026",35,Inputs and assumptions,8,2026
+ARCT Hennes Bay,ARCT Hennes Bay movies team requirements,1,Design,Glen,31-Aug-26,2-Sep-26,2,Completed,Awaiting feedback from Movies team,36,Software accessibility and availability,8,2026
+TML White Devil,TML White Devil drill and blast package,1,Design,King,31-Aug-26,4-Sep-26,4,In progress,TML White Devil mining support,36,Inputs and assumptions,8,2026
+Internal,Self-paced QGIS training,2,Training,King,1-Sep-26,4-Sep-26,3,In progress,Continuous upskilling/familiarization of QGIS software,36,Availability of reference materials,9,2026
+ARCT Hennes Bay,ARCT Hennes Bay revised pre-production and sustaining capital studies,1,Others,Glen,2-Sep-26,3-Sep-26,1,Completed,Revised based on inputs and feedback of Peter George,36,Inputs and assumptions,9,2026
+ARCT Bidjovagge,ARCT Bidjovagge UG solid block model and conceptual underground design,2,Design,Glen,3-Sep-26,6-Sep-26,3,In progress,Stopeshell modeling and conceptual underground design,36,Software accessibility and availability,9,2026
+ARCT Bidjovagge,ARCT Bidjovagge UG solid block model and conceptual underground design,1,Design,Glen,7-Sep-26,8-Sep-26,1,Completed,Additional requirements of 3D Modeling and Movies teams,37,Inputs and assumptions,9,2026
+Internal,Self-paced QGIS training,2,Training,King,7-Sep-26,11-Sep-26,4,In progress,Continuous upskilling/familiarization of QGIS software,37,Availability of reference materials,9,2026
+ARCT Hennes Bay,ARCT Hennes Bay Movies inputs updated,1,Others,Glen,8-Sep-26,9-Sep-26,1,Completed,Additional inputs based on the initial rendered movie,37,Inputs and assumptions,9,2026
+TML Tenant Creek Dist,Mining support requirements,1,Others,King,8-Sep-26,9-Sep-26,1,Completed,Repair and validation of surface topography and boundary,37,Inputs and assumptions,9,2026
+Internal,Deswik planning training for Jr. EM,2,Training,"Glen, King",10-Sep-26,11-Sep-26,1,In progress,Continuous upskilling/familiarization of Deswik software for Jr. EM,37,Availability of reference materials,9,2026
+ARCT Hennes Bay,ARCT Hennes Bay 3D Modeling requirements,1,Design,Glen,13-Sep-26,13-Sep-26,0,Completed,Urgent requirements of 3D Modeling,37,Inputs and assumptions,9,2026
+ARCT Hennes Bay,ARCT Hennes Bay visualization inputs and requirements for Client and collaboration with Movies and 3D modeling teams,1,Others,Glen,14-Sep-26,17-Sep-26,3,Completed,Additional inputs based on the initial rendered movie,38,Inputs and assumptions,9,2026
+Internal,Deswik planning training for Jr. EM,2,Training,"Glen, King",14-Sep-26,18-Sep-26,4,In progress,Continuous upskilling/familiarization of Deswik software for Jr. EM,38,Availability of reference materials,9,2026
+TML Tenant Creek Dist,Mining support requirements,1,Others,King,16-Sep-26,16-Sep-26,0,Completed,Repair and validation of surface topography and boundary as requestred by Clinton G.,38,Inputs and assumptions,9,2026
+ARCT Bidjovagge,ARCT Bidjovagge visualization review and input requirements for Movies team,1,Others,Glen,17-Sep-26,17-Sep-26,0,Completed,Additional inputs based on the initial rendered movie,38,Inputs and assumptions,9,2026
+TML Tenant Creek Dist,Daily Dashboard upgrade for TML,1,Procedure,Glen,19-Sep-26,20-Sep-26,1,Completed,Dashboard upgrade as requested by Andrew,38,Inputs and assumptions,9,2026
+Internal,Deswik planning training for Jr. EM,2,Training,"Glen, King",21-Sep-26,25-Sep-26,4,In progress,Continuous upskilling/familiarization of Deswik software for Jr. EM,39,Availability of reference materials,9,2026
+TML Tenant Creek Dist,Daily Dashboard upgrade for TML,1,Procedure,Glen,21-Sep-26,23-Sep-26,2,Completed,Minor revision of upgraded revised dashboard,39,Inputs and assumptions,9,2026
+TML Tenant Creek Dist,TML 10-Year Work Program,3,,,,,0,Upcoming,Set schedule; resource plan,,Resource planning risk,,
+EVN Mungari,Mungarri Mining support,3,,,,,0,Upcoming,Set schedule; resource plan,,Resource planning risk,,
+Internal,Deswik Training (3rd party),3,,,,,0,Upcoming,Set schedule; resource plan,,Resource planning risk,,
+`;
+const SOURCE_FILENAME = "tasks_rev1.csv";
+
+/* ============================================================
+   CSV PARSER (RFC4180-ish: handles quoted fields containing
+   commas and embedded newlines)
+   ============================================================ */
+function parseCSV(text) {
+  const rows = [];
+  let row = [], field = '', inQuotes = false, i = 0;
+  const n = text.length;
+  while (i < n) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i += 2; continue; }
+        inQuotes = false; i++; continue;
+      } else { field += c; i++; continue; }
+    } else {
+      if (c === '"') { inQuotes = true; i++; continue; }
+      if (c === ',') { row.push(field); field = ''; i++; continue; }
+      if (c === '\r') { i++; continue; }
+      if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; i++; continue; }
+      field += c; i++; continue;
+    }
+  }
+  if (field.length > 0 || row.length > 0) { row.push(field); rows.push(row); }
+  while (rows.length && rows[rows.length - 1].every(f => f === '')) rows.pop();
+  if (!rows.length) return [];
+  const header = rows[0];
+  return rows.slice(1).map(r => {
+    const obj = {};
+    header.forEach((h, idx) => obj[h.trim()] = (r[idx] !== undefined ? r[idx] : '').trim());
+    return obj;
+  });
+}
+
+/* ============================================================
+   DATE / PERIOD UTILITIES
+   ============================================================ */
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTH_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function parseDate(s) {
+  if (!s) return null;
+  const parts = s.split('-');
+  if (parts.length !== 3) return null;
+  const d = parseInt(parts[0], 10);
+  const mIdx = MONTHS.indexOf(parts[1]);
+  let y = parseInt(parts[2], 10);
+  if (isNaN(y)) return null;
+  y = y < 100 ? 2000 + y : y;
+  if (mIdx < 0 || isNaN(d)) return null;
+  return new Date(y, mIdx, d);
+}
+function fmtDate(d, opts) { return d ? d.toLocaleDateString('en-US', opts || { month: 'short', day: 'numeric' }) : ''; }
+function fmtDateFull(d) { return d ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''; }
+function addDays(d, n) { return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); }
+function startOfWeekMon(d) {
+  const day = d.getDay();
+  const diff = (day === 0 ? -6 : 1 - day);
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate() + diff);
+}
+function endOfWeek(mon) { return addDays(mon, 6); }
+function startOfMonth(d) { return new Date(d.getFullYear(), d.getMonth(), 1); }
+function endOfMonth(d) { return new Date(d.getFullYear(), d.getMonth() + 1, 0); }
+function startOfYear(d) { return new Date(d.getFullYear(), 0, 1); }
+function dateKey(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+function monthKey(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0'); }
+function sameDay(a,b){ return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate(); }
+
+function niceCeil(v) {
+  if (v <= 5) return 5;
+  const mag = Math.pow(10, Math.floor(Math.log10(v)));
+  const norm = v / mag;
+  let nice;
+  if (norm <= 1) nice = 1; else if (norm <= 2) nice = 2; else if (norm <= 2.5) nice = 2.5; else if (norm <= 5) nice = 5; else nice = 10;
+  return nice * mag;
+}
+
+function fixText(s) {
+  if (!s) return s;
+  return s.replace(/GG Clark/g, 'Global Geologica Clark');
+}
+function escapeHtml(s) {
+  if (s === null || s === undefined) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/* ============================================================
+   APP STATE
+   ============================================================ */
+const COLORS = { completed: '#82914F', 'in-progress': '#0C3547', scheduled: '#AD7F24' };
+const STATUS_LABELS = { completed: 'Completed', 'in-progress': 'In progress', scheduled: 'Scheduled' };
+const AVATAR_PALETTE = ['#0C3547', '#82914F', '#AD7F24', '#5B7C8D', '#7A5C74', '#8E6E53'];
+const CLIENT_PALETTE = ['#0C3547', '#82914F', '#AD7F24', '#5B7C8D', '#7A5C74', '#8E6E53', '#3F5C3A', '#2F6B82'];
+
+function hashStr(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return h;
+}
+function splitNames(raw) {
+  if (!raw) return [];
+  return raw.split(/[,.]+/).map(s => s.trim()).filter(Boolean);
+}
+function avatarHtml(name, size) {
+  const key = name.trim().toLowerCase();
+  const url = state.avatars.get(key);
+  const initial = name.trim().charAt(0).toUpperCase();
+  const sizeClass = size === 'lg' ? ' lg' : '';
+  const safeName = escapeHtml(name);
+  if (url) {
+    return `<span class="avatar${sizeClass}" title="${safeName}" style="background-image:url('${url}')"></span>`;
+  }
+  const color = AVATAR_PALETTE[hashStr(key) % AVATAR_PALETTE.length];
+  return `<span class="avatar${sizeClass}" title="${safeName}" style="background:${color}">${escapeHtml(initial)}</span>`;
+}
+function avatarGroupHtml(raw) {
+  const names = splitNames(raw);
+  if (!names.length) return '<span class="cell-muted">\u2014</span>';
+  return `<span class="avatar-group">${names.map(n => avatarHtml(n)).join('')}</span><span class="assignee-names">${escapeHtml(names.join(', '))}</span>`;
+}
+function distinctAssignees() {
+  const set = new Set();
+  state.tasks.forEach(t => splitNames(t.assignTo).forEach(n => set.add(n)));
+  return [...set].sort((a,b) => a.localeCompare(b));
+}
+
+const state = {
+  tasks: [],       // dated tasks (completed / in-progress / scheduled)
+  backlog: [],      // undated "Upcoming" tasks
+  weeks: [],        // array of Monday Date objects, ascending
+  months: [],       // array of month-start Date objects, ascending
+  years: [],        // array of year numbers, ascending
+  periodType: 'week',
+  periodValue: null, // Date (week Monday / month start) or number (year)
+  recentSort: { col: null, dir: 'desc' },
+  backlogSort: { col: 'priority', dir: 'asc' },
+  sourceLabel: SOURCE_FILENAME,
+  linked: false,
+  pollTimer: null,
+  avatars: new Map(), // name (lowercase) -> data URL
+  currentPeriodLabel: ''
+};
+
+function buildFromRows(rows) {
+  const tasks = [];
+  const backlog = [];
+  rows.forEach(r => {
+    const start = parseDate(r.Start);
+    const finish = parseDate(r.Finish);
+    let status;
+    if (r.Status === 'Completed') status = 'completed';
+    else if (r.Status === 'In progress') status = 'in-progress';
+    else status = start ? 'scheduled' : 'backlog';
+    const t = {
+      client: r.Client || '', workstream: fixText(r.Workstream || ''), priority: parseInt(r.Priority,10) || 3,
+      area: r.Area || '', assignTo: r['Assign To'] || '', start, finish,
+      duration: r.Duration || '', status, remarks: fixText(r.Remarks || ''),
+      risks: fixText(r['Risks and Dependencies'] || '')
+    };
+    t.notes = t.remarks || t.risks || '';
+    if (status === 'backlog') backlog.push(t); else tasks.push(t);
+  });
+
+  const weekMap = new Map();
+  const monthMap = new Map();
+  const yearSet = new Set();
+  tasks.forEach(t => {
+    const mon = startOfWeekMon(t.start);
+    weekMap.set(dateKey(mon), mon);
+    monthMap.set(monthKey(t.start), startOfMonth(t.start));
+    yearSet.add(t.start.getFullYear());
+  });
+
+  state.tasks = tasks;
+  state.backlog = backlog;
+  state.weeks = [...weekMap.values()].sort((a,b)=>a-b);
+  state.months = [...monthMap.values()].sort((a,b)=>a-b);
+  state.years = [...yearSet.values()].sort((a,b)=>a-b);
+
+  // "As of" reference date = the latest activity date present in the data.
+  // Used (instead of the browser's real-world clock) so schedule-risk flags
+  // stay meaningful against whatever snapshot of data is loaded.
+  let asOf = null;
+  tasks.forEach(t => {
+    const d = t.finish || t.start;
+    if (d && (!asOf || d > asOf)) asOf = d;
+  });
+  state.asOfDate = asOf || new Date();
+
+  // Flag in-progress tasks whose planned finish date has already passed the as-of date.
+  tasks.forEach(t => { t.overdue = (t.status === 'in-progress' && t.finish && t.finish < state.asOfDate); });
+
+  state.programHealth = computeProgramHealth();
+
+  // default selections: latest week / month / year present in data
+  state.periodType = 'week';
+  state.periodValue = state.weeks.length ? state.weeks[state.weeks.length-1] : new Date();
+}
+
+function computeProgramHealth() {
+  const active = state.tasks.filter(t => t.status === 'in-progress');
+  const overdue = active.filter(t => t.overdue);
+  const highPriorityBacklog = state.backlog.filter(t => t.priority === 1);
+  const ratio = active.length ? overdue.length / active.length : 0;
+  let level = 'green', label = 'On track';
+  if (ratio > 0.3 || highPriorityBacklog.length > 3) { level = 'red'; label = 'At risk'; }
+  else if (overdue.length > 0 || highPriorityBacklog.length > 0) { level = 'amber'; label = 'Needs attention'; }
+  return { activeCount: active.length, overdueCount: overdue.length, highPriorityBacklogCount: highPriorityBacklog.length, ratio, level, label };
+}
+
+/* ============================================================
+   PERIOD RANGE + REFERENCE-DATE LOGIC
+   ============================================================ */
+function currentRange() {
+  if (!state.periodValue) state.periodValue = state.periodType === 'year' ? new Date().getFullYear() : new Date();
+  if (state.periodType === 'week') {
+    const s = state.periodValue, e = endOfWeek(s);
+    return { start: s, end: e };
+  }
+  if (state.periodType === 'month') {
+    const s = state.periodValue;
+    return { start: s, end: endOfMonth(s) };
+  }
+  const y = state.periodValue;
+  return { start: new Date(y,0,1), end: new Date(y,11,31) };
+}
+
+function referenceDateForWeek(weekStart) {
+  const weekEnd = endOfWeek(weekStart);
+  const mEnd = endOfMonth(weekStart);
+  return weekEnd.getTime() >= mEnd.getTime() ? mEnd : weekEnd;
+}
+
+function tasksInRange(list, start, end) {
+  return list.filter(t => t.start >= start && t.start <= end);
+}
+function countStatus(list) {
+  const c = { completed: 0, 'in-progress': 0, scheduled: 0 };
+  list.forEach(t => { if (c[t.status] !== undefined) c[t.status]++; });
+  return c;
+}
+function totalOf(c){ return c.completed + c['in-progress'] + c.scheduled; }
+
+/* ============================================================
+   SVG CHART HELPERS
+   ============================================================ */
+const SVGNS = 'http://www.w3.org/2000/svg';
+function se(tag, attrs) {
+  const el = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) el.setAttribute(k, attrs[k]);
+  return el;
+}
+
+function renderDonut(container, legendContainer, counts) {
+  container.innerHTML = ''; legendContainer.innerHTML = '';
+  const total = totalOf(counts);
+  const size = 180, stroke = 24, r = (size - stroke)/2, c = 2*Math.PI*r;
+  const svg = se('svg', { viewBox:`0 0 ${size} ${size}`, width:'100%', height:size });
+  svg.appendChild(se('circle', { cx:size/2, cy:size/2, r, fill:'none', stroke:'#EEEBDF', 'stroke-width':stroke }));
+  let offset = 0;
+  const order = ['completed','in-progress','scheduled'];
+  if (total > 0) {
+    order.forEach(k => {
+      const v = counts[k];
+      if (!v) return;
+      const frac = v/total, len = frac*c;
+      const circle = se('circle', {
+        cx:size/2, cy:size/2, r, fill:'none', stroke:COLORS[k], 'stroke-width':stroke,
+        'stroke-dasharray': `${len} ${c-len}`, 'stroke-dashoffset': -offset,
+        transform:`rotate(-90 ${size/2} ${size/2})`
+      });
+      svg.appendChild(circle);
+      offset += len;
+    });
+  }
+  const t1 = se('text', { x:size/2, y:size/2-2, 'text-anchor':'middle', class:'donut-total' });
+  t1.textContent = total;
+  const t2 = se('text', { x:size/2, y:size/2+18, 'text-anchor':'middle', class:'donut-sub' });
+  t2.textContent = total === 1 ? 'task' : 'tasks';
+  svg.appendChild(t1); svg.appendChild(t2);
+  container.appendChild(svg);
+
+  order.forEach(k => {
+    const v = counts[k];
+    const row = document.createElement('div'); row.className = 'legend-item';
+    const pct = total ? Math.round((v/total)*100) : 0;
+    row.innerHTML = `<span class="swatch" style="background:${COLORS[k]}"></span>
+      <span class="legend-label">${STATUS_LABELS[k]}</span>
+      <span class="legend-pct">${total ? pct+'%' : ''}</span>
+      <span class="legend-count">${v}</span>`;
+    legendContainer.appendChild(row);
+  });
+}
+
+function renderStackedBar(container, categories, rows) {
+  container.innerHTML = '';
+  const keys = ['completed','in-progress','scheduled'];
+  const W = 560, H = 210, padL = 30, padR = 8, padT = 14, padB = 26;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+  const n = Math.max(categories.length, 1);
+  const gap = n > 8 ? 6 : 12;
+  const barW = Math.min(46, (plotW - gap*(n-1)) / n);
+  const totals = rows.map(r => (r.completed||0)+(r['in-progress']||0)+(r.scheduled||0));
+  const maxTotal = niceCeil(Math.max(1, ...totals));
+  const svg = se('svg', { viewBox:`0 0 ${W} ${H}`, width:'100%', height:H });
+
+  const steps = 4;
+  for (let i=0;i<=steps;i++) {
+    const y = padT + plotH - (i/steps)*plotH;
+    svg.appendChild(se('line', { x1:padL, y1:y, x2:W-padR, y2:y, stroke:'#EEEBDF', 'stroke-width':1 }));
+    const lbl = se('text', { x:padL-6, y:y+3, 'text-anchor':'end', class:'axis-label' });
+    lbl.textContent = Math.round(maxTotal*i/steps);
+    svg.appendChild(lbl);
+  }
+
+  const totalPlotW = n*barW + (n-1)*gap;
+  const startX = padL + Math.max(0, (plotW - totalPlotW)/2);
+  categories.forEach((cat, idx) => {
+    const x = startX + idx*(barW+gap);
+    let yCursor = padT + plotH;
+    keys.forEach(k => {
+      const v = (rows[idx][k]) || 0;
+      if (!v) return;
+      const h = (v/maxTotal)*plotH;
+      yCursor -= h;
+      svg.appendChild(se('rect', { x, y:yCursor, width:barW, height:Math.max(h,0), fill:COLORS[k], rx:2 }));
+    });
+    const catLbl = se('text', { x:x+barW/2, y:padT+plotH+16, 'text-anchor':'middle', class:'axis-label-cat' });
+    catLbl.textContent = cat;
+    svg.appendChild(catLbl);
+    if (totals[idx] > 0) {
+      const tot = se('text', { x:x+barW/2, y:yCursor-6, 'text-anchor':'middle', class:'bar-total' });
+      tot.textContent = totals[idx];
+      svg.appendChild(tot);
+    }
+  });
+  container.appendChild(svg);
+}
+
+function renderComparison(container, legendContainer, deltaEl, prevCounts, currCounts, prevLabel, currLabel) {
+  container.innerHTML = ''; legendContainer.innerHTML = '';
+  const keys = ['completed','in-progress','scheduled'];
+  const W = 560, H = 210, padL = 30, padR = 8, padT = 14, padB = 30;
+  const plotW = W-padL-padR, plotH = H-padT-padB;
+  const groupGap = 26, barGap = 6;
+  const n = keys.length;
+  const groupW = (plotW - groupGap*(n-1)) / n;
+  const barW = (groupW - barGap) / 2;
+  const maxVal = niceCeil(Math.max(1, ...keys.map(k => Math.max(prevCounts[k]||0, currCounts[k]||0))));
+  const svg = se('svg', { viewBox:`0 0 ${W} ${H}`, width:'100%', height:H });
+
+  const steps = 4;
+  for (let i=0;i<=steps;i++) {
+    const y = padT + plotH - (i/steps)*plotH;
+    svg.appendChild(se('line', { x1:padL, y1:y, x2:W-padR, y2:y, stroke:'#EEEBDF', 'stroke-width':1 }));
+    const lbl = se('text', { x:padL-6, y:y+3, 'text-anchor':'end', class:'axis-label' });
+    lbl.textContent = Math.round(maxVal*i/steps);
+    svg.appendChild(lbl);
+  }
+
+  keys.forEach((k, idx) => {
+    const gx = padL + idx*(groupW+groupGap);
+    const pv = prevCounts[k]||0, cv = currCounts[k]||0;
+    const ph = (pv/maxVal)*plotH, ch = (cv/maxVal)*plotH;
+    svg.appendChild(se('rect', { x:gx, y:padT+plotH-ph, width:barW, height:Math.max(ph,0), fill:COLORS[k], opacity:0.4, rx:2 }));
+    svg.appendChild(se('rect', { x:gx+barW+barGap, y:padT+plotH-ch, width:barW, height:Math.max(ch,0), fill:COLORS[k], rx:2 }));
+    if (pv>0) { const t=se('text',{x:gx+barW/2,y:padT+plotH-ph-6,'text-anchor':'middle',class:'axis-label'}); t.textContent=pv; svg.appendChild(t); }
+    if (cv>0) { const t=se('text',{x:gx+barW+barGap+barW/2,y:padT+plotH-ch-6,'text-anchor':'middle',class:'bar-total'}); t.textContent=cv; svg.appendChild(t); }
+    const catLbl = se('text', { x:gx+groupW/2, y:padT+plotH+18, 'text-anchor':'middle', class:'axis-label-cat' });
+    catLbl.textContent = STATUS_LABELS[k];
+    svg.appendChild(catLbl);
+  });
+  container.appendChild(svg);
+
+  [['prev',prevLabel,0.4],['curr',currLabel,1]].forEach(([id,label,op]) => {
+    const row = document.createElement('div'); row.className='legend-item';
+    row.innerHTML = `<span class="swatch" style="background:var(--navy); opacity:${op}"></span><span class="legend-label">${label}</span>`;
+    legendContainer.appendChild(row);
+  });
+
+  const prevTotal = totalOf(prevCounts), currTotal = totalOf(currCounts);
+  const diff = currTotal - prevTotal;
+  deltaEl.className = 'delta-chip ' + (diff > 0 ? 'up' : diff < 0 ? 'down' : 'flat');
+  const pct = prevTotal > 0 ? Math.round((diff/prevTotal)*100) : (currTotal>0 ? 100 : 0);
+  deltaEl.textContent = diff === 0 ? 'No change' : (diff > 0 ? '+' : '') + diff + ' task' + (Math.abs(diff)===1?'':'s') + ' (' + (diff>0?'+':'') + pct + '%)';
+}
+
+/* ============================================================
+   SHARE BREAKDOWNS (horizontal bar) — used for Client shares
+   and Work by area
+   ============================================================ */
+function renderShareBreakdown(container, tasks, keyFn, emptyMsg, otherLabelFn) {
+  const total = tasks.length;
+  if (!total) {
+    container.innerHTML = `<p style="color:var(--ink-soft); font-size:13px; padding:20px 0; text-align:center;">${emptyMsg}</p>`;
+    return;
+  }
+  const map = new Map();
+  tasks.forEach(t => { const k = keyFn(t) || 'Unspecified'; map.set(k, (map.get(k) || 0) + 1); });
+  const entries = [...map.entries()].sort((a, b) => b[1] - a[1]);
+  const topN = 8;
+  let shown = entries.slice(0, topN);
+  const rest = entries.slice(topN);
+  if (rest.length) {
+    const restTotal = rest.reduce((s, [, v]) => s + v, 0);
+    shown = shown.concat([[otherLabelFn(rest.length), restTotal]]);
+  }
+  const maxCount = Math.max(...shown.map(([, v]) => v));
+  container.innerHTML = shown.map(([label, count], idx) => {
+    const pct = Math.round((count / total) * 100);
+    const barPct = Math.round((count / maxCount) * 100);
+    const color = CLIENT_PALETTE[idx % CLIENT_PALETTE.length];
+    const safeLabel = escapeHtml(label);
+    return `
+      <div class="share-row">
+        <span class="share-label" title="${safeLabel}">${safeLabel}</span>
+        <span class="share-bar-track"><span class="share-bar-fill" style="width:${barPct}%; background:${color};"></span></span>
+        <span class="share-count">${count}</span>
+        <span class="share-pct">${pct}%</span>
+      </div>`;
+  }).join('');
+  container.classList.add('share-bars');
+}
+function renderClientShares(container, tasks) {
+  renderShareBreakdown(container, tasks, t => t.client, 'No tasks in this period to break down by client.', n => `Other clients (${n})`);
+}
+function renderAreaShares(container, tasks) {
+  renderShareBreakdown(container, tasks, t => t.area, 'No tasks in this period to break down by area.', n => `Other areas (${n})`);
+}
+
+/* ============================================================
+   RENDER: Headline summary
+   ============================================================ */
+function buildHeadline(periodLabel, counts, prevCounts, prevLabel, backlogCount) {
+  const total = totalOf(counts);
+  const backlogNote = backlogCount
+    ? ` ${backlogCount} unscheduled backlog item${backlogCount===1?'':'s'} ${backlogCount===1?'also awaits':'also await'} scheduling.`
+    : '';
+  if (total === 0) {
+    return `<strong>${periodLabel}:</strong> no tasks were recorded in this period.${backlogNote}`;
+  }
+  const parts = [];
+  if (counts.completed) parts.push(`${counts.completed} completed`);
+  if (counts['in-progress']) parts.push(`${counts['in-progress']} in progress`);
+  if (counts.scheduled) parts.push(`${counts.scheduled} scheduled`);
+  const compRate = Math.round((counts.completed/total)*100);
+  let trend = '';
+  if (prevCounts) {
+    const prevTotal = totalOf(prevCounts);
+    const diff = total - prevTotal;
+    if (diff === 0) trend = ` Task volume is flat vs. ${prevLabel}.`;
+    else {
+      const pct = prevTotal > 0 ? Math.round((Math.abs(diff)/prevTotal)*100) : 100;
+      trend = ` Task volume is ${diff>0?'up':'down'} ${pct}% vs. ${prevLabel} (${diff>0?'+':''}${diff}).`;
+    }
+  }
+  return `<strong>${periodLabel}:</strong> ${total} task${total===1?'':'s'} tracked \u2014 ${parts.join(', ')}. ${compRate}% completion rate.${trend}${backlogNote}`;
+}
+
+/* ============================================================
+   RENDER: Program status chip (header)
+   ============================================================ */
+function renderProgramHealth() {
+  const h = state.programHealth;
+  const headerChip = document.getElementById('headerStatusChip');
+  if (!h) { headerChip.innerHTML = ''; return; }
+  headerChip.innerHTML = `<span class="dot level-${h.level}"></span>Program status: ${h.label}`;
+}
+
+/* ============================================================
+   RENDER: KPI cards
+   ============================================================ */
+function renderKPIs(counts, prevCounts) {
+  const total = totalOf(counts);
+  const pct = v => total ? Math.round((v/total)*100)+'% of total' : 'no tasks yet';
+  const trend = k => {
+    if (!prevCounts) return '';
+    const diff = counts[k] - prevCounts[k];
+    if (diff === 0) return '<span class="kpi-trend flat">\u2014 no change</span>';
+    const arrow = diff > 0 ? '\u25B2' : '\u25BC';
+    const cls = diff > 0 ? 'up' : 'down';
+    return `<span class="kpi-trend ${cls}">${arrow} ${diff>0?'+':''}${diff} vs previous</span>`;
+  };
+  const rowHtml = `
+    <div class="kpi-card"><div class="kpi-label">Total tasks</div><div class="kpi-value">${total}</div><div class="kpi-sub">in selected period</div></div>
+    <div class="kpi-card completed"><div class="kpi-label">Completed</div><div class="kpi-value">${counts.completed}</div><div class="kpi-sub">${pct(counts.completed)}</div>${trend('completed')}</div>
+    <div class="kpi-card progress"><div class="kpi-label">In progress</div><div class="kpi-value">${counts['in-progress']}</div><div class="kpi-sub">${pct(counts['in-progress'])}</div>${trend('in-progress')}</div>
+    <div class="kpi-card scheduled"><div class="kpi-label">Scheduled</div><div class="kpi-value">${counts.scheduled}</div><div class="kpi-sub">${pct(counts.scheduled)}</div>${trend('scheduled')}</div>
+  `;
+  document.getElementById('kpiRow').innerHTML = rowHtml;
+}
+
+/* ============================================================
+   RENDER: period select options
+   ============================================================ */
+function populatePeriodSelect() {
+  const sel = document.getElementById('periodSelect');
+  sel.innerHTML = '';
+  if (state.periodType === 'week') {
+    state.weeks.forEach(w => {
+      const opt = document.createElement('option');
+      opt.value = dateKey(w);
+      opt.textContent = 'Week of ' + fmtDate(w) + ' \u2013 ' + fmtDateFull(endOfWeek(w));
+      sel.appendChild(opt);
+    });
+    const cur = state.periodValue instanceof Date ? dateKey(state.periodValue) : null;
+    if (cur && [...sel.options].some(o=>o.value===cur)) sel.value = cur;
+    else if (sel.options.length) { sel.selectedIndex = sel.options.length-1; state.periodValue = state.weeks[state.weeks.length-1]; }
+  } else if (state.periodType === 'month') {
+    state.months.forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = monthKey(m);
+      opt.textContent = MONTH_FULL[m.getMonth()] + ' ' + m.getFullYear();
+      sel.appendChild(opt);
+    });
+    const cur = state.periodValue instanceof Date ? monthKey(state.periodValue) : null;
+    if (cur && [...sel.options].some(o=>o.value===cur)) sel.value = cur;
+    else if (sel.options.length) { sel.selectedIndex = sel.options.length-1; state.periodValue = state.months[state.months.length-1]; }
+  } else {
+    state.years.forEach(y => {
+      const opt = document.createElement('option');
+      opt.value = String(y); opt.textContent = String(y);
+      sel.appendChild(opt);
+    });
+    const cur = typeof state.periodValue === 'number' ? String(state.periodValue) : null;
+    if (cur && [...sel.options].some(o=>o.value===cur)) sel.value = cur;
+    else if (sel.options.length) { sel.selectedIndex = sel.options.length-1; state.periodValue = state.years[state.years.length-1]; }
+  }
+}
+
+/* ============================================================
+   MAIN RENDER
+   ============================================================ */
+function render() {
+  const range = currentRange();
+  const periodTasks = tasksInRange(state.tasks, range.start, range.end);
+  const counts = countStatus(periodTasks);
+  renderProgramHealth();
+
+  // ---- Donut ----
+  const donutLabel = state.periodType === 'week'
+    ? 'Week of ' + fmtDate(range.start) + ' \u2013 ' + fmtDateFull(range.end)
+    : state.periodType === 'month'
+      ? MONTH_FULL[range.start.getMonth()] + ' ' + range.start.getFullYear()
+      : String(range.start.getFullYear());
+  document.getElementById('donutTitle').textContent = 'Status mix';
+  document.getElementById('donutSubtitle').textContent = donutLabel;
+  renderDonut(document.getElementById('donutChart'), document.getElementById('donutLegend'), counts);
+
+  // ---- Comparison + trend charts (mode-specific) ----
+  const compareTitleEl = document.getElementById('compareTitle');
+  const compareSubEl = document.getElementById('compareSubtitle');
+  const compareChartEl = document.getElementById('compareChart');
+  const compareLegendEl = document.getElementById('compareLegend');
+  const deltaChipEl = document.getElementById('deltaChip');
+  const trendRowEl = document.getElementById('trendRow');
+  let prevCountsForHeadline = null, prevLabelForHeadline = '';
+
+  if (state.periodType === 'week') {
+    trendRowEl.classList.remove('single');
+    document.getElementById('trendBCard').style.display = '';
+    const weekStart = range.start, weekEnd = range.end;
+    const prevStart = addDays(weekStart, -7), prevEnd = endOfWeek(prevStart);
+    const prevCounts = countStatus(tasksInRange(state.tasks, prevStart, prevEnd));
+    compareTitleEl.textContent = 'Week-on-week comparison';
+    compareSubEl.textContent = fmtDate(prevStart) + '\u2013' + fmtDate(prevEnd) + '  vs  ' + fmtDate(weekStart) + '\u2013' + fmtDate(weekEnd);
+    renderComparison(compareChartEl, compareLegendEl, deltaChipEl, prevCounts, counts, 'Previous week', 'Selected week');
+    prevCountsForHeadline = prevCounts; prevLabelForHeadline = 'the previous week';
+
+    const ref = referenceDateForWeek(weekStart);
+    // Trend A: weeks within the month, up to reference date
+    const mStart = startOfMonth(weekStart);
+    const weekCats = [], weekRows = [];
+    let wk = startOfWeekMon(mStart);
+    while (wk <= ref) {
+      const bucketStart = wk < mStart ? mStart : wk;
+      const bucketEnd = endOfWeek(wk) < ref ? endOfWeek(wk) : ref;
+      weekCats.push(fmtDate(bucketStart, {month:'short', day:'numeric'}));
+      weekRows.push(countStatus(tasksInRange(state.tasks, bucketStart, bucketEnd)));
+      wk = addDays(wk, 7);
+    }
+    document.getElementById('trendATitle').textContent = 'Running month-to-date';
+    document.getElementById('trendASubtitle').textContent = MONTH_FULL[mStart.getMonth()] + ' 1 \u2013 ' + fmtDateFull(ref);
+    renderStackedBar(document.getElementById('trendAChart'), weekCats, weekRows);
+
+    // Trend B: months within the year, up to reference date's month
+    const yStart = startOfYear(ref);
+    const monthCats = [], monthRows = [];
+    for (let m=0; m<=ref.getMonth(); m++) {
+      const ms = new Date(ref.getFullYear(), m, 1);
+      const me = (m===ref.getMonth()) ? ref : endOfMonth(ms);
+      monthCats.push(MONTHS[m]);
+      monthRows.push(countStatus(tasksInRange(state.tasks, ms, me)));
+    }
+    document.getElementById('trendBTitle').textContent = 'Running year-to-date';
+    document.getElementById('trendBSubtitle').textContent = 'Jan 1 \u2013 ' + fmtDateFull(ref);
+    renderStackedBar(document.getElementById('trendBChart'), monthCats, monthRows);
+
+  } else if (state.periodType === 'month') {
+    trendRowEl.classList.add('single');
+    document.getElementById('trendBCard').style.display = 'none';
+    const mStart = range.start;
+    const prevStart = new Date(mStart.getFullYear(), mStart.getMonth()-1, 1);
+    const prevEnd = endOfMonth(prevStart);
+    const prevCounts = countStatus(tasksInRange(state.tasks, prevStart, prevEnd));
+    compareTitleEl.textContent = 'Month-on-month comparison';
+    compareSubEl.textContent = MONTH_FULL[prevStart.getMonth()] + ' ' + prevStart.getFullYear() + '  vs  ' + MONTH_FULL[mStart.getMonth()] + ' ' + mStart.getFullYear();
+    renderComparison(compareChartEl, compareLegendEl, deltaChipEl, prevCounts, counts, 'Previous month', 'Selected month');
+    prevCountsForHeadline = prevCounts; prevLabelForHeadline = 'the previous month';
+
+    const weekCats = [], weekRows = [];
+    let wk = startOfWeekMon(mStart);
+    const mEnd = endOfMonth(mStart);
+    while (wk <= mEnd) {
+      const bucketStart = wk < mStart ? mStart : wk;
+      const bucketEnd = endOfWeek(wk) < mEnd ? endOfWeek(wk) : mEnd;
+      weekCats.push(fmtDate(bucketStart, {month:'short', day:'numeric'}));
+      weekRows.push(countStatus(tasksInRange(state.tasks, bucketStart, bucketEnd)));
+      wk = addDays(wk, 7);
+    }
+    document.getElementById('trendATitle').textContent = 'Weeks in ' + MONTH_FULL[mStart.getMonth()];
+    document.getElementById('trendASubtitle').textContent = fmtDate(mStart) + ' \u2013 ' + fmtDateFull(mEnd);
+    renderStackedBar(document.getElementById('trendAChart'), weekCats, weekRows);
+
+  } else {
+    trendRowEl.classList.add('single');
+    document.getElementById('trendBCard').style.display = 'none';
+    const y = range.start.getFullYear();
+    const hasPrev = state.years.includes(y-1);
+    compareTitleEl.textContent = 'Year-on-year comparison';
+    if (hasPrev) {
+      const prevCounts = countStatus(tasksInRange(state.tasks, new Date(y-1,0,1), new Date(y-1,11,31)));
+      compareSubEl.textContent = (y-1) + '  vs  ' + y;
+      renderComparison(compareChartEl, compareLegendEl, deltaChipEl, prevCounts, counts, String(y-1), String(y));
+      prevCountsForHeadline = prevCounts; prevLabelForHeadline = String(y-1);
+    } else {
+      compareSubEl.textContent = 'No data available for ' + (y-1) + ' yet';
+      compareChartEl.innerHTML = '<p style="color:var(--ink-soft); font-size:13px; padding:30px 0; text-align:center;">Not enough history to compare years yet.</p>';
+      compareLegendEl.innerHTML = '';
+      deltaChipEl.className = 'delta-chip flat'; deltaChipEl.textContent = '\u2014';
+    }
+
+    const monthCats = [], monthRows = [];
+    for (let m=0;m<12;m++) {
+      const ms = new Date(y, m, 1), me = endOfMonth(ms);
+      monthCats.push(MONTHS[m]);
+      monthRows.push(countStatus(tasksInRange(state.tasks, ms, me)));
+    }
+    document.getElementById('trendATitle').textContent = 'Months in ' + y;
+    document.getElementById('trendASubtitle').textContent = 'Jan \u2013 Dec ' + y;
+    renderStackedBar(document.getElementById('trendAChart'), monthCats, monthRows);
+  }
+
+  document.getElementById('headlineBar').innerHTML = buildHeadline(donutLabel, counts, prevCountsForHeadline, prevLabelForHeadline, state.backlog.length);
+  state.currentPeriodLabel = donutLabel;
+  document.getElementById('printMeta').textContent = 'Period: ' + donutLabel;
+  renderKPIs(counts, prevCountsForHeadline);
+
+  document.getElementById('periodNote').textContent = periodTasks.length + ' task' + (periodTasks.length===1?'':'s') + ' start in this period.';
+  document.getElementById('recentCaption').textContent = 'Tasks starting between ' + fmtDateFull(range.start) + ' and ' + fmtDateFull(range.end) + '. Click a column header to sort.';
+
+  document.getElementById('clientSubtitle').textContent = donutLabel;
+  renderClientShares(document.getElementById('clientChart'), periodTasks);
+  document.getElementById('areaSubtitle').textContent = donutLabel;
+  renderAreaShares(document.getElementById('areaChart'), periodTasks);
+
+  renderRecentTable(periodTasks);
+  renderBacklogTable(state.backlog);
+}
+
+/* ============================================================
+   RECENT UPDATES TABLE
+   ============================================================ */
+function renderRecentTable(tasks) {
+  const list = tasks.slice();
+  const { col, dir } = state.recentSort;
+  if (col) {
+    list.sort((a,b) => {
+      let av = a[col], bv = b[col];
+      if (typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
+      if (av < bv) return dir==='asc' ? -1 : 1;
+      if (av > bv) return dir==='asc' ? 1 : -1;
+      return 0;
+    });
+  } else {
+    list.sort((a,b) => b.start - a.start);
+  }
+  const body = document.getElementById('recentBody');
+  if (!list.length) {
+    body.innerHTML = '<tr class="empty-row"><td colspan="8">No tasks start in this period.</td></tr>';
+  } else {
+    body.innerHTML = list.map(t => `
+      <tr>
+        <td><span class="status-pill ${t.status}">${STATUS_LABELS[t.status]}</span></td>
+        <td>${escapeHtml(t.workstream)}</td>
+        <td class="cell-muted">${t.area ? escapeHtml(t.area) : '\u2014'}</td>
+        <td class="cell-muted">${escapeHtml(t.client)}</td>
+        <td>${avatarGroupHtml(t.assignTo)}</td>
+        <td class="cell-muted">${fmtDate(t.start)}</td>
+        <td class="cell-muted">${t.finish ? fmtDate(t.finish) : '\u2014'}</td>
+        <td class="cell-remarks">${t.remarks ? escapeHtml(t.remarks) : '\u2014'}</td>
+      </tr>`).join('');
+  }
+  updateSortArrows('recentTable', state.recentSort);
+}
+
+/* ============================================================
+   UNSCHEDULED BACKLOG TABLE
+   ============================================================ */
+function renderBacklogTable(items) {
+  const list = items.slice();
+  const { col, dir } = state.backlogSort;
+  list.sort((a,b) => {
+    let av = a[col], bv = b[col];
+    if (typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
+    if (av < bv) return dir==='asc' ? -1 : 1;
+    if (av > bv) return dir==='asc' ? 1 : -1;
+    return 0;
+  });
+  const body = document.getElementById('backlogBody');
+  if (!list.length) {
+    body.innerHTML = '<tr class="empty-row"><td colspan="5">No unscheduled backlog items.</td></tr>';
+  } else {
+    body.innerHTML = list.map(t => `
+      <tr>
+        <td>${escapeHtml(t.workstream)}</td>
+        <td><span class="priority-pill p${t.priority}">${t.priority===1?'High':t.priority===2?'Medium':'Low'}</span></td>
+        <td class="cell-muted">${escapeHtml(t.client)}</td>
+        <td class="cell-muted">${t.area ? escapeHtml(t.area) : '\u2014'}</td>
+        <td class="cell-remarks">${t.notes ? escapeHtml(t.notes) : '\u2014'}</td>
+      </tr>`).join('');
+  }
+  updateSortArrows('backlogTable', state.backlogSort);
+}
+
+function updateSortArrows(tableId, sortState) {
+  const table = document.getElementById(tableId);
+  table.querySelectorAll('th.sortable').forEach(th => {
+    const arrow = th.querySelector('.sort-arrow');
+    if (th.dataset.sort === sortState.col) arrow.textContent = sortState.dir === 'asc' ? '\u25B2' : '\u25BC';
+    else arrow.textContent = '';
+  });
+}
+
+/* ============================================================
+   ASSIGNEE PHOTOS (avatars)
+   ============================================================ */
+function openAvatarModal() {
+  renderAvatarManageList();
+  document.getElementById('avatarModalOverlay').classList.remove('hidden');
+}
+function closeAvatarModal() {
+  document.getElementById('avatarModalOverlay').classList.add('hidden');
+}
+function renderAvatarManageList() {
+  const names = distinctAssignees();
+  const list = document.getElementById('avatarManageList');
+  if (!names.length) {
+    list.innerHTML = '<p class="avatar-empty">No assignees found in the current data yet.</p>';
+    return;
+  }
+  list.innerHTML = names.map(name => {
+    const hasPhoto = state.avatars.has(name.toLowerCase());
+    const safeName = escapeHtml(name);
+    return `
+    <div class="avatar-manage-row">
+      ${avatarHtml(name, 'lg')}
+      <span class="avatar-name">${safeName}</span>
+      <label class="btn btn-small">Upload&hellip;<input type="file" accept="image/*" class="avatar-file-input" data-name="${safeName}" style="display:none"></label>
+      <button class="btn btn-small btn-remove" data-name="${safeName}" ${hasPhoto ? '' : 'disabled'}>Remove</button>
+    </div>`;
+  }).join('');
+}
+function readImageAsAvatarDataUrl(file, cb) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const size = 96;
+      const canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const side = Math.min(img.width, img.height);
+      const sx = (img.width - side) / 2, sy = (img.height - side) / 2;
+      ctx.drawImage(img, sx, sy, side, side, 0, 0, size, size);
+      cb(canvas.toDataURL('image/jpeg', 0.85));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function exportAvatarSet() {
+  const obj = {};
+  state.avatars.forEach((v, k) => obj[k] = v);
+  const blob = new Blob([JSON.stringify(obj)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'gg_assignee_photos.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function importAvatarSetFromText(text) {
+  try {
+    const obj = JSON.parse(text);
+    Object.keys(obj).forEach(k => state.avatars.set(k.toLowerCase(), obj[k]));
+    renderAvatarManageList();
+    render();
+  } catch (err) {
+    alert('That file could not be read as a photo set (expected a .json file exported from this dashboard).');
+  }
+}
+
+/* ============================================================
+   EVENTS
+   ============================================================ */
+document.getElementById('tabGroup').addEventListener('click', e => {
+  const btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  state.periodType = btn.dataset.period;
+  state.periodValue = null;
+  populatePeriodSelect();
+  render();
+});
+
+document.getElementById('periodSelect').addEventListener('change', e => {
+  const v = e.target.value;
+  if (state.periodType === 'week') state.periodValue = state.weeks.find(w => dateKey(w) === v);
+  else if (state.periodType === 'month') state.periodValue = state.months.find(m => monthKey(m) === v);
+  else state.periodValue = parseInt(v, 10);
+  render();
+});
+
+document.getElementById('recentTable').addEventListener('click', e => {
+  const th = e.target.closest('th.sortable');
+  if (!th) return;
+  const col = th.dataset.sort;
+  if (state.recentSort.col === col) state.recentSort.dir = state.recentSort.dir === 'asc' ? 'desc' : 'asc';
+  else state.recentSort = { col, dir: 'asc' };
+  render();
+});
+
+document.getElementById('backlogTable').addEventListener('click', e => {
+  const th = e.target.closest('th.sortable');
+  if (!th) return;
+  const col = th.dataset.sort;
+  if (state.backlogSort.col === col) state.backlogSort.dir = state.backlogSort.dir === 'asc' ? 'desc' : 'asc';
+  else state.backlogSort = { col, dir: 'asc' };
+  render();
+});
+
+document.getElementById('loadFileBtn').addEventListener('click', () => document.getElementById('fileInput').click());
+document.getElementById('fileInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    applyNewData(ev.target.result, file.name, false);
+  };
+  reader.readAsText(file);
+});
+document.getElementById('retryFetchBtn').addEventListener('click', () => attemptLink(true));
+
+document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+document.getElementById('avatarModalBtn').addEventListener('click', openAvatarModal);
+document.getElementById('avatarModalClose').addEventListener('click', closeAvatarModal);
+document.getElementById('avatarModalOverlay').addEventListener('click', e => {
+  if (e.target.id === 'avatarModalOverlay') closeAvatarModal();
+});
+document.getElementById('exportAvatarsBtn').addEventListener('click', exportAvatarSet);
+document.getElementById('importAvatarsBtn').addEventListener('click', () => document.getElementById('avatarSetInput').click());
+document.getElementById('avatarSetInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => importAvatarSetFromText(ev.target.result);
+  reader.readAsText(file);
+});
+document.getElementById('avatarManageList').addEventListener('change', e => {
+  const input = e.target.closest('.avatar-file-input');
+  if (!input || !input.files[0]) return;
+  const name = input.dataset.name;
+  readImageAsAvatarDataUrl(input.files[0], dataUrl => {
+    state.avatars.set(name.toLowerCase(), dataUrl);
+    renderAvatarManageList();
+    render();
+  });
+});
+document.getElementById('avatarManageList').addEventListener('click', e => {
+  const btn = e.target.closest('.btn-remove');
+  if (!btn) return;
+  state.avatars.delete(btn.dataset.name.toLowerCase());
+  renderAvatarManageList();
+  render();
+});
+
+/* ============================================================
+   DATA LOADING / LINKING
+   ============================================================ */
+function applyNewData(text, label, linked) {
+  const rows = parseCSV(text);
+  buildFromRows(rows);
+  state.sourceLabel = label;
+  state.linked = linked;
+  populatePeriodSelect();
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.period === 'week'));
+  state.periodType = 'week';
+  render();
+  updateSourcePanel();
+}
+
+function updateSourcePanel() {
+  const dot = document.getElementById('srcDot');
+  const label = document.getElementById('srcLabel');
+  const meta = document.getElementById('srcMeta');
+  dot.classList.toggle('offline', !state.linked);
+  label.innerHTML = 'Source: <span class="source-file">' + escapeHtml(state.sourceLabel) + '</span>';
+  const allDated = state.tasks;
+  const latest = allDated.length ? allDated.reduce((m,t)=> t.start>m ? t.start : m, allDated[0].start) : null;
+  const asOf = latest ? ('Latest activity ' + fmtDateFull(latest)) : 'No dated tasks found';
+  meta.textContent = (state.linked ? 'Live-linked \u00b7 auto-refreshes' : 'Manual snapshot \u00b7 click "Update data" to refresh') + ' \u00b7 ' + asOf;
+}
+
+function attemptLink(manual) {
+  const dot = document.getElementById('srcDot');
+  const label = document.getElementById('srcLabel');
+  if (manual) label.textContent = 'Re-checking ' + SOURCE_FILENAME + '\u2026';
+  const fallback = () => {
+    if (!manual && !state.tasks.length && !state.backlog.length) {
+      // first load failed -> fall back to embedded snapshot
+      applyNewData(EMBEDDED_CSV, SOURCE_FILENAME + ' (embedded snapshot)', false);
+    } else if (manual) {
+      updateSourcePanel();
+      label.textContent = 'Could not reach ' + SOURCE_FILENAME + ' \u2014 using last loaded data';
+      setTimeout(updateSourcePanel, 2500);
+    }
+  };
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 4000);
+    fetch(SOURCE_FILENAME, { cache: 'no-store', signal: controller.signal })
+      .then(res => { clearTimeout(timeout); if (!res.ok) throw new Error('not ok'); return res.text(); })
+      .then(text => {
+        applyNewData(text, SOURCE_FILENAME, true);
+        if (!state.pollTimer) {
+          state.pollTimer = setInterval(() => attemptLink(false), 60000);
+        }
+      })
+      .catch(() => { clearTimeout(timeout); fallback(); });
+  } catch (err) {
+    fallback();
+  }
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+window.__gg = { state, render, distinctAssignees, renderAvatarManageList, importAvatarSetFromText };
+attemptLink(false);
+</script>
+</body>
+</html>
