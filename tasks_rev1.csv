@@ -1,5 +1,4 @@
-Client,Workstream,Priority,Area,Assign To,Start,Finish,Duration,Status,Remarks,Week,Risks and Dependencies,Month,Year
-Internal,Pit or Dump Design procedure,3,Procedure,Glen,16-Feb-26,24-Feb-26,8,Completed,Completed,8,"Multiple versions, non compliance, errors",2,2026
+Internal,Pit or Dump Design procedure,3,Procedure,Glen,46069,46077,8,Completed,Completed,8,"Multiple versions, non compliance, errors",2,2026
 Internal,Pseudoflow Algorithm for Pit Optimization procedure,3,Procedure,Glen,16-Feb-26,24-Feb-26,8,Completed,Completed,8,"Multiple versions, non compliance, errors",2,2026
 Internal,D&B QA/QC SOP,3,Procedure,Glen,28-Feb-26,1-Mar-26,1,Completed,Pending Site Management approval,9,Governance dependency,2,2026
 CUF Orlando,Orlando Pit Optimization,1,Optimization,"Glen, Steph",28-Feb-26,3-Mar-26,3,Completed,Main pushback RF1.00 (best margin),9,Governance dependency,2,2026
@@ -159,6 +158,8 @@ TML Tenant Creek Dist,Daily Dashboard upgrade for TML,1,Procedure,Glen,19-Sep-26
 Internal,Deswik planning training for Jr. EM,2,Training,"Glen, King",21-Sep-26,25-Sep-26,4,In progress,Continuous upskilling/familiarization of Deswik software for Jr. EM,39,Availability of reference materials,9,2026
 TML Tenant Creek Dist,Daily Dashboard upgrade for TML,1,Procedure,Glen,21-Sep-26,23-Sep-26,2,Completed,Minor revision of upgraded revised dashboard,39,Inputs and assumptions,9,2026
 Internal,Strategic marketing for business unit,2,Others,"Glen, King",24-Sep-26,25-Sep-26,1,In progress,Marketing pitch and image for marketing,39,Resource materials,9,2026
+Internal,Strategic marketing for business unit,2,Others,"Glen, King",28-Sep-26,2-Oct-26,4,In progress,Marketing pitch and image for marketing,40,Resource materials,9,2026
+Internal,Deswik planning training for Jr. EM,2,Training,"Glen, King",28-Sep-26,2-Oct-26,4,In progress,Continuous upskilling/familiarization of Deswik software for Jr. EM,40,Availability of reference materials,9,2026
 TML Tenant Creek Dist,TML 10-Year Work Program,3,,,,,0,Upcoming,Set schedule; resource plan,,Resource planning risk,,
 EVN Mungari,Mungarri Mining support,3,,,,,0,Upcoming,Set schedule; resource plan,,Resource planning risk,,
 Internal,Deswik Training (3rd party),3,,,,,0,Upcoming,Set schedule; resource plan,,Resource planning risk,,
