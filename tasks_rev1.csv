@@ -175,6 +175,9 @@ Internal,Business unit posting pitch and ideas for socmed,2,Others,King,13-Oct-2
 ARCT Bidjovagge,Revised pit optimization,1,Optimization,"Glen, King",15-Oct-26,16-Oct-26,1,In progress,Revised pit optimization runs using Cueq instead of Aueq,42,Inputs and assumptions,10,2026
 ARCT Bidjovagge,Revised pit optimization,1,Optimization,King,19-Oct-26,20-Oct-26,1,Completed,Revised pit optimization runs using Cueq instead of Aueq,43,Inputs and assumptions,10,2026
 Internal,Business unit posting pitch and ideas for socmed,2,Others,King,19-Oct-26,23-Oct-26,4,In progress,Weekly BU technical posting for socmed content,43,Marketing claims ahead of capability,10,2026
+Internal,Open pit planning and scheduling automated template for Au and Cu,2,Others,"Glen, King",26-Oct-26,30-Oct-26,4,In progress,Automated template with required inputs from Deswik outputs such as task solids converted to csv file,44,Inputs and assumptions,10,2026
+Internal,General workflow of the open pit planning and scheduling automated template for Au and Cu,2,Procedure,Glen,27-Oct-26,30-Oct-26,3,In progress,"General workflow from data exports from Deswik, validation, review, sign off and periodic updates",44,Inputs and assumptions,10,2026
+TML White Devil,TML White Devil required design inputs for the interactive dashboard of GIS,2,Others,King,29-Oct-26,29-Oct-26,0,Completed,"Inputs such as design polylines, surface and solids",44,Data quality and coordinate reference system,10,2026
 TML Tenant Creek Dist,TML 10-Year Work Program,3,,,,,0,Upcoming,Set schedule; resource plan,,Resource planning risk,,
 EVN Mungari,Mungarri Mining support,3,,,,,0,Upcoming,Set schedule; resource plan,,Resource planning risk,,
 Internal,Deswik Training (3rd party),3,,,,,0,Upcoming,Set schedule; resource plan,,Resource planning risk,,
