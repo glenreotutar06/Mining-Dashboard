@@ -218,6 +218,23 @@
   .kpi-trend.down{color:var(--risk-red);}
   .kpi-trend.flat{color:var(--ink-soft); font-weight:500;}
 
+  /* ---------- MTD / YTD summary ---------- */
+  .summary-row{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px;}
+  .summary-card{background:var(--white); border:1px solid var(--line); border-top:3px solid var(--navy); border-radius:8px; padding:14px 18px 12px;}
+  .summary-card.ytd{border-top-color:var(--olive);}
+  .summary-head{display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
+  .summary-title{font-family:var(--font-head); font-size:14.5px; font-weight:600; color:var(--ink); margin:0;}
+  .summary-range{font-size:12px; color:var(--ink-soft);}
+  .summary-tiles{display:grid; grid-template-columns:repeat(5,1fr); gap:0;}
+  .summary-tile{padding:2px 10px; border-left:1px solid var(--line-soft);}
+  .summary-tile:first-child{border-left:none; padding-left:0;}
+  .summary-tile-label{font-size:11.5px; font-weight:600; color:var(--ink-soft); margin-bottom:4px;}
+  .summary-tile-value{font-family:var(--font-head); font-size:25px; font-weight:600; line-height:1.1; color:var(--ink);}
+  .summary-tile-value.completed{color:#5f6e33;}
+  .summary-tile-value.progress{color:var(--navy);}
+  .summary-tile-value.backlog{color:var(--gold);}
+  .summary-tile-sub{font-size:11px; color:var(--ink-soft); margin-top:3px;}
+
   /* ---------- Headline summary ---------- */
   .headline{
     background:var(--white); border:1px solid var(--line); border-left:4px solid var(--olive);
@@ -266,7 +283,9 @@
 
   @media (max-width:880px){
     .kpi-row{grid-template-columns:repeat(2,1fr);}
-    .charts-row, .trend-row{grid-template-columns:1fr;}
+    .charts-row, .trend-row, .summary-row{grid-template-columns:1fr;}
+    .summary-tiles{grid-template-columns:repeat(3,1fr); row-gap:12px;}
+    .summary-tile:nth-child(4){border-left:none; padding-left:0;}
     .header{flex-direction:column; align-items:flex-start;}
     .source-panel{align-items:flex-start; text-align:left;}
   }
@@ -288,7 +307,7 @@
     .print-header h1{font-family:var(--font-head); font-size:19px; margin:0; color:var(--navy);}
     .print-header p{margin:2px 0 0; font-size:11.5px; color:var(--ink-soft);}
     .table-scroll{max-height:none !important; overflow:visible !important;}
-    .kpi-card, .chart-card, .table-card, .headline{break-inside:avoid; page-break-inside:avoid;}
+    .kpi-card, .chart-card, .table-card, .headline, .summary-card{break-inside:avoid; page-break-inside:avoid;}
     .section-title{page-break-after:avoid;}
     .data-table thead th{position:static;}
     * { -webkit-print-color-adjust:exact; print-color-adjust:exact; color-adjust:exact; }
@@ -351,6 +370,8 @@
   <div class="headline" id="headlineBar"></div>
 
   <div class="kpi-row" id="kpiRow"></div>
+
+  <div class="summary-row" id="periodSummary"></div>
 
   <div class="charts-row">
     <div class="chart-card">
@@ -613,23 +634,8 @@ Internal,Self-paced QGIS training,2,Training,King,25-Aug-26,28-Aug-26,3,In progr
 ARCT Hennes Bay,ARCT Hennes Bay revised conceptual UG design,1,Design,Glen,26-Aug-26,29-Aug-26,3,In progress,Revised inputs and assumptions c/o Peter George,35,Software accessibility and availability,8,2026
 Webbs Patch,Data and reference review,2,Others,Steph,26-Aug-26,27-Aug-26,1,Completed,"Reference materials shared by Leo Dagdag dated Aug 25, 2026",35,Inputs and assumptions,8,2026
 ARCT Hennes Bay,ARCT Hennes Bay movies team requirements,1,Design,Glen,31-Aug-26,2-Sep-26,2,Completed,Awaiting feedback from Movies team,36,Software accessibility and availability,8,2026
-TML White Devil,TML White Devil drill and blast package,1,Design,King,31-Aug-26,4-Sep-26,4,In progress,TML White Devil mining support,36,Inputs and assumptions,8,2026
 Internal,Self-paced QGIS training,2,Training,King,1-Sep-26,4-Sep-26,3,In progress,Continuous upskilling/familiarization of QGIS software,36,Availability of reference materials,9,2026
 ARCT Hennes Bay,ARCT Hennes Bay revised pre-production and sustaining capital studies,1,Others,Glen,2-Sep-26,3-Sep-26,1,Completed,Revised based on inputs and feedback of Peter George,36,Inputs and assumptions,9,2026
-ARCT Bidjovagge,ARCT Bidjovagge UG solid block model and conceptual underground design,2,Design,Glen,3-Sep-26,6-Sep-26,3,In progress,Stopeshell modeling and conceptual underground design,36,Software accessibility and availability,9,2026
-ARCT Bidjovagge,ARCT Bidjovagge UG solid block model and conceptual underground design,1,Design,Glen,7-Sep-26,8-Sep-26,1,Completed,Additional requirements of 3D Modeling and Movies teams,37,Inputs and assumptions,9,2026
-Internal,Self-paced QGIS training,2,Training,King,7-Sep-26,11-Sep-26,4,In progress,Continuous upskilling/familiarization of QGIS software,37,Availability of reference materials,9,2026
-ARCT Hennes Bay,ARCT Hennes Bay Movies inputs updated,1,Others,Glen,8-Sep-26,9-Sep-26,1,Completed,Additional inputs based on the initial rendered movie,37,Inputs and assumptions,9,2026
-TML Tenant Creek Dist,Mining support requirements,1,Others,King,8-Sep-26,9-Sep-26,1,Completed,Repair and validation of surface topography and boundary,37,Inputs and assumptions,9,2026
-Internal,Deswik planning training for Jr. EM,2,Training,"Glen, King",10-Sep-26,11-Sep-26,1,In progress,Continuous upskilling/familiarization of Deswik software for Jr. EM,37,Availability of reference materials,9,2026
-ARCT Hennes Bay,ARCT Hennes Bay 3D Modeling requirements,1,Design,Glen,13-Sep-26,13-Sep-26,0,Completed,Urgent requirements of 3D Modeling,37,Inputs and assumptions,9,2026
-ARCT Hennes Bay,ARCT Hennes Bay visualization inputs and requirements for Client and collaboration with Movies and 3D modeling teams,1,Others,Glen,14-Sep-26,17-Sep-26,3,Completed,Additional inputs based on the initial rendered movie,38,Inputs and assumptions,9,2026
-Internal,Deswik planning training for Jr. EM,2,Training,"Glen, King",14-Sep-26,18-Sep-26,4,In progress,Continuous upskilling/familiarization of Deswik software for Jr. EM,38,Availability of reference materials,9,2026
-TML Tenant Creek Dist,Mining support requirements,1,Others,King,16-Sep-26,16-Sep-26,0,Completed,Repair and validation of surface topography and boundary as requestred by Clinton G.,38,Inputs and assumptions,9,2026
-ARCT Bidjovagge,ARCT Bidjovagge visualization review and input requirements for Movies team,1,Others,Glen,17-Sep-26,17-Sep-26,0,Completed,Additional inputs based on the initial rendered movie,38,Inputs and assumptions,9,2026
-TML Tenant Creek Dist,Daily Dashboard upgrade for TML,1,Procedure,Glen,19-Sep-26,20-Sep-26,1,Completed,Dashboard upgrade as requested by Andrew,38,Inputs and assumptions,9,2026
-Internal,Deswik planning training for Jr. EM,2,Training,"Glen, King",21-Sep-26,25-Sep-26,4,In progress,Continuous upskilling/familiarization of Deswik software for Jr. EM,39,Availability of reference materials,9,2026
-TML Tenant Creek Dist,Daily Dashboard upgrade for TML,1,Procedure,Glen,21-Sep-26,23-Sep-26,2,Completed,Minor revision of upgraded revised dashboard,39,Inputs and assumptions,9,2026
 TML Tenant Creek Dist,TML 10-Year Work Program,3,,,,,0,Upcoming,Set schedule; resource plan,,Resource planning risk,,
 EVN Mungari,Mungarri Mining support,3,,,,,0,Upcoming,Set schedule; resource plan,,Resource planning risk,,
 Internal,Deswik Training (3rd party),3,,,,,0,Upcoming,Set schedule; resource plan,,Resource planning risk,,
@@ -1111,6 +1117,86 @@ function renderProgramHealth() {
 }
 
 /* ============================================================
+   RENDER: Month-to-date / Year-to-date summary
+   Entries   = dated task rows starting in the range
+   Unique    = distinct tasks (client + task name), since the same task
+               is often logged repeatedly (e.g. weekly entries)
+   Completed / In progress = unique tasks, one status each (latest entry)
+   Backlog   = undated "upcoming" items; shown as the current count
+   ============================================================ */
+function uniqueTaskCount(list) {
+  const norm = v => String(v || '').trim().toLowerCase().replace(/\s+/g, ' ');
+  return new Set(list.map(t => norm(t.client) + '|' + norm(t.workstream))).size;
+}
+// One status per unique task = the status of its latest entry in the range
+// (latest start, then latest finish; if still tied, "in progress" wins as the work is not confirmed closed).
+function uniqueTaskStatuses(list) {
+  const norm = v => String(v || '').trim().toLowerCase().replace(/\s+/g, ' ');
+  const rank = { completed: 0, scheduled: 1, 'in-progress': 2 };
+  const latest = new Map();
+  list.forEach(t => {
+    const k = norm(t.client) + '|' + norm(t.workstream);
+    const cur = latest.get(k);
+    const tStart = t.start.getTime(), tFin = (t.finish || t.start).getTime();
+    if (!cur) { latest.set(k, t); return; }
+    const cStart = cur.start.getTime(), cFin = (cur.finish || cur.start).getTime();
+    if (tStart > cStart || (tStart === cStart && (tFin > cFin || (tFin === cFin && rank[t.status] > rank[cur.status])))) latest.set(k, t);
+  });
+  const c = { completed: 0, 'in-progress': 0, scheduled: 0 };
+  latest.forEach(t => { if (c[t.status] !== undefined) c[t.status]++; });
+  return c;
+}
+function summaryRanges(range) {
+  if (state.periodType === 'week') {
+    const ref = referenceDateForWeek(range.start);   // same anchor as the running MTD/YTD charts
+    return { mtd: { start: startOfMonth(range.start), end: ref }, ytd: { start: startOfYear(ref), end: ref } };
+  }
+  if (state.periodType === 'month') {
+    const mEnd = endOfMonth(range.start);
+    return { mtd: { start: range.start, end: mEnd }, ytd: { start: startOfYear(range.start), end: mEnd } };
+  }
+  // Year: anchor to the last month that has data in the selected year
+  const y = range.start.getFullYear();
+  const inYear = tasksInRange(state.tasks, range.start, range.end);
+  const last = inYear.length ? inYear.reduce((m, t) => t.start > m ? t.start : m, inYear[0].start) : range.end;
+  const ref = endOfMonth(last);
+  return { mtd: { start: startOfMonth(ref), end: ref }, ytd: { start: new Date(y, 0, 1), end: ref } };
+}
+function summaryCardHtml(title, cls, r) {
+  const list = tasksInRange(state.tasks, r.start, r.end);
+  const entries = list.length;
+  const unique = uniqueTaskCount(list);
+  const c = uniqueTaskStatuses(list);          // unique tasks by status (completed + in progress + scheduled = unique)
+  const backlog = state.backlog.length;
+  const pct = v => unique ? Math.round((v / unique) * 100) + '% of unique' : '\u2014';
+  const scheduledTile = c.scheduled > 0
+    ? `<div class="summary-tile"><div class="summary-tile-label">Scheduled</div><div class="summary-tile-value">${c.scheduled}</div><div class="summary-tile-sub">${pct(c.scheduled)}</div></div>`
+    : '';
+  const avg = unique ? (entries / unique).toFixed(1) : '0';
+  return `
+    <div class="summary-card ${cls}">
+      <div class="summary-head">
+        <h3 class="summary-title">${title}</h3>
+        <span class="summary-range">${fmtDate(r.start)} \u2013 ${fmtDateFull(r.end)}</span>
+      </div>
+      <div class="summary-tiles">
+        <div class="summary-tile"><div class="summary-tile-label">Task entries</div><div class="summary-tile-value">${entries}</div><div class="summary-tile-sub">rows logged</div></div>
+        <div class="summary-tile"><div class="summary-tile-label">Unique tasks</div><div class="summary-tile-value">${unique}</div><div class="summary-tile-sub">${avg} entries each</div></div>
+        <div class="summary-tile"><div class="summary-tile-label">Completed</div><div class="summary-tile-value completed">${c.completed}</div><div class="summary-tile-sub">${pct(c.completed)}</div></div>
+        <div class="summary-tile"><div class="summary-tile-label">In progress</div><div class="summary-tile-value progress">${c['in-progress']}</div><div class="summary-tile-sub">${pct(c['in-progress'])}</div></div>
+        ${scheduledTile}
+        <div class="summary-tile"><div class="summary-tile-label">Backlog items</div><div class="summary-tile-value backlog">${backlog}</div><div class="summary-tile-sub">unscheduled</div></div>
+      </div>
+    </div>`;
+}
+function renderPeriodSummary(range) {
+  const r = summaryRanges(range);
+  document.getElementById('periodSummary').innerHTML =
+    summaryCardHtml('Month to date', '', r.mtd) +
+    summaryCardHtml('Year to date', 'ytd', r.ytd) ;
+}
+
+/* ============================================================
    RENDER: KPI cards
    ============================================================ */
 function renderKPIs(counts, prevCounts) {
@@ -1298,6 +1384,7 @@ function render() {
   state.currentPeriodLabel = donutLabel;
   document.getElementById('printMeta').textContent = 'Period: ' + donutLabel;
   renderKPIs(counts, prevCountsForHeadline);
+  renderPeriodSummary(range);
 
   document.getElementById('periodNote').textContent = periodTasks.length + ' task' + (periodTasks.length===1?'':'s') + ' start in this period.';
   document.getElementById('recentCaption').textContent = 'Tasks starting between ' + fmtDateFull(range.start) + ' and ' + fmtDateFull(range.end) + '. Click a column header to sort.';
