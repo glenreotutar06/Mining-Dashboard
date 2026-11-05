@@ -71,11 +71,6 @@
     margin:0 0 2px;
   }
   .brand-text p{margin:0; color:#C7D8DD; font-size:12.5px;}
-  .header-status-chip{display:flex; align-items:center; gap:6px; margin-top:5px !important; font-size:12px; font-weight:700; color:#fff !important;}
-  .header-status-chip .dot{width:8px; height:8px; border-radius:50%; flex:none;}
-  .header-status-chip .dot.level-green{background:var(--olive);}
-  .header-status-chip .dot.level-amber{background:var(--gold);}
-  .header-status-chip .dot.level-red{background:#E38268;}
 
   .source-panel{
     position:relative; z-index:1;
@@ -278,6 +273,7 @@
 
   /* ---------- Print header (hidden on screen) ---------- */
   .print-header{display:none;}
+  .print-frame, .print-frame > tbody, .print-frame > tbody > tr, .print-frame > tbody > tr > td{display:block; width:100%; padding:0; border:0;}
 
   .footer{margin-top:30px; font-size:11.5px; color:var(--ink-soft); text-align:center;}
 
@@ -293,12 +289,13 @@
   /* ---------- Print / export ---------- */
   @media print{
     body{background:#fff;}
-    .page{max-width:100%; padding:0; margin:0; display:table; width:100%;}
+    .page{max-width:100%; padding:0; margin:0;}
     .header, .controls, .modal-overlay, .footer{display:none !important;}
-    .print-body{display:table-row-group;}
-    .print-header{
-      display:table-header-group !important;
-    }
+    .print-frame{display:table; width:100%; border-collapse:collapse;}
+    .print-frame > thead{display:table-header-group !important;}
+    .print-frame > thead > tr, .print-frame > tbody > tr{display:table-row;}
+    .print-frame > tbody{display:table-row-group;}
+    .print-frame > thead > tr > td, .print-frame > tbody > tr > td{display:table-cell; width:auto; padding:0; vertical-align:top;}
     .print-header-inner{
       display:flex; align-items:center; gap:14px;
       padding-bottom:12px; border-bottom:2px solid var(--navy); margin-bottom:16px;
@@ -317,7 +314,7 @@
 <body>
 <div class="page">
 
-  <div class="print-header" id="printHeader">
+  <table class="print-frame" role="presentation"><thead class="print-header" id="printHeader"><tr><td>
     <div class="print-header-inner">
       <img src="data:image/jpeg;base64,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" alt="Global Geologica Pty Ltd logo">
       <div>
@@ -326,9 +323,8 @@
         <p id="printMeta"></p>
       </div>
     </div>
-  </div>
-
-  <div class="print-body">
+  </td></tr></thead>
+  <tbody><tr><td class="print-body">
 
   <div class="header">
     <svg class="contour" viewBox="0 0 340 220" xmlns="http://www.w3.org/2000/svg">
@@ -341,7 +337,6 @@
       <div class="brand-text">
         <h1>Global Geologica Pty Ltd</h1>
         <p>Mining Business Unit &mdash; Task Dashboard</p>
-        <p class="header-status-chip" id="headerStatusChip"></p>
       </div>
     </div>
     <div class="source-panel">
@@ -464,7 +459,7 @@
 
   <p class="footer">Global Geologica Pty Ltd &middot; Mining Business Unit Dashboard &middot; data refreshes from the linked CSV export</p>
 
-  </div>
+  </td></tr></tbody></table>
 </div>
 
 <div class="modal-overlay hidden" id="avatarModalOverlay">
@@ -826,35 +821,35 @@ function buildFromRows(rows) {
   state.months = [...monthMap.values()].sort((a,b)=>a-b);
   state.years = [...yearSet.values()].sort((a,b)=>a-b);
 
-  // "As of" reference date = the latest activity date present in the data.
-  // Used (instead of the browser's real-world clock) so schedule-risk flags
-  // stay meaningful against whatever snapshot of data is loaded.
+  // "As of" reference date = the latest logged activity (start date) present in the data.
+  // Used (instead of the browser's real-world clock) to tell complete periods
+  // from periods that are still in progress in the loaded snapshot.
   let asOf = null;
   tasks.forEach(t => {
-    const d = t.finish || t.start;
+    const d = t.start;   // latest LOGGED activity (a planned finish date is not evidence the data runs that far)
     if (d && (!asOf || d > asOf)) asOf = d;
   });
   state.asOfDate = asOf || new Date();
 
-  // Flag in-progress tasks whose planned finish date has already passed the as-of date.
-  tasks.forEach(t => { t.overdue = (t.status === 'in-progress' && t.finish && t.finish < state.asOfDate); });
-
-  state.programHealth = computeProgramHealth();
-
-  // default selections: latest week / month / year present in data
+  // default selection: the latest COMPLETE week (a partial week would give a thin, misleading first view)
   state.periodType = 'week';
-  state.periodValue = state.weeks.length ? state.weeks[state.weeks.length-1] : new Date();
+  state.periodValue = defaultPeriodValue('week');
 }
 
-function computeProgramHealth() {
-  const active = state.tasks.filter(t => t.status === 'in-progress');
-  const overdue = active.filter(t => t.overdue);
-  const highPriorityBacklog = state.backlog.filter(t => t.priority === 1);
-  const ratio = active.length ? overdue.length / active.length : 0;
-  let level = 'green', label = 'On track';
-  if (ratio > 0.3 || highPriorityBacklog.length > 3) { level = 'red'; label = 'At risk'; }
-  else if (overdue.length > 0 || highPriorityBacklog.length > 0) { level = 'amber'; label = 'Needs attention'; }
-  return { activeCount: active.length, overdueCount: overdue.length, highPriorityBacklogCount: highPriorityBacklog.length, ratio, level, label };
+// Latest complete week/month (period end on or before the data "as of" date); falls back to the latest available.
+function defaultPeriodValue(type) {
+  const asOf = state.asOfDate.getTime();
+  if (type === 'week') {
+    const done = state.weeks.filter(w => endOfWeek(w).getTime() <= asOf);
+    const pick = done.length ? done : state.weeks;
+    return pick.length ? pick[pick.length - 1] : new Date();
+  }
+  if (type === 'month') {
+    const done = state.months.filter(m => endOfMonth(m).getTime() <= asOf);
+    const pick = done.length ? done : state.months;
+    return pick.length ? pick[pick.length - 1] : new Date();
+  }
+  return state.years.length ? state.years[state.years.length - 1] : new Date().getFullYear();
 }
 
 /* ============================================================
@@ -883,11 +878,8 @@ function referenceDateForWeek(weekStart) {
 function tasksInRange(list, start, end) {
   return list.filter(t => t.start >= start && t.start <= end);
 }
-function countStatus(list) {
-  const c = { completed: 0, 'in-progress': 0, scheduled: 0 };
-  list.forEach(t => { if (c[t.status] !== undefined) c[t.status]++; });
-  return c;
-}
+// Status counts are ALWAYS on a unique-task basis (see uniqueTaskStatuses): one task = one status.
+function countStatus(list) { return uniqueTaskStatuses(list); }
 function totalOf(c){ return c.completed + c['in-progress'] + c.scheduled; }
 
 /* ============================================================
@@ -925,7 +917,7 @@ function renderDonut(container, legendContainer, counts) {
   const t1 = se('text', { x:size/2, y:size/2-2, 'text-anchor':'middle', class:'donut-total' });
   t1.textContent = total;
   const t2 = se('text', { x:size/2, y:size/2+18, 'text-anchor':'middle', class:'donut-sub' });
-  t2.textContent = total === 1 ? 'task' : 'tasks';
+  t2.textContent = total === 1 ? 'unique task' : 'unique tasks';
   svg.appendChild(t1); svg.appendChild(t2);
   container.appendChild(svg);
 
@@ -1080,7 +1072,7 @@ function renderAreaShares(container, tasks) {
 /* ============================================================
    RENDER: Headline summary
    ============================================================ */
-function buildHeadline(periodLabel, counts, prevCounts, prevLabel, backlogCount) {
+function buildHeadline(periodLabel, counts, prevCounts, prevLabel, backlogCount, entries, asOfLabel, hadPrev) {
   const total = totalOf(counts);
   const backlogNote = backlogCount
     ? ` ${backlogCount} unscheduled backlog item${backlogCount===1?'':'s'} ${backlogCount===1?'also awaits':'also await'} scheduling.`
@@ -1094,7 +1086,11 @@ function buildHeadline(periodLabel, counts, prevCounts, prevLabel, backlogCount)
   if (counts.scheduled) parts.push(`${counts.scheduled} scheduled`);
   const compRate = Math.round((counts.completed/total)*100);
   let trend = '';
-  if (prevCounts) {
+  if (asOfLabel) {
+    trend = hadPrev
+      ? ` This period is still in progress (data through ${asOfLabel}), so it is not compared with ${prevLabel}.`
+      : ` Data runs through ${asOfLabel}.`;
+  } else if (prevCounts) {
     const prevTotal = totalOf(prevCounts);
     const diff = total - prevTotal;
     if (diff === 0) trend = ` Task volume is flat vs. ${prevLabel}.`;
@@ -1103,17 +1099,7 @@ function buildHeadline(periodLabel, counts, prevCounts, prevLabel, backlogCount)
       trend = ` Task volume is ${diff>0?'up':'down'} ${pct}% vs. ${prevLabel} (${diff>0?'+':''}${diff}).`;
     }
   }
-  return `<strong>${periodLabel}:</strong> ${total} task${total===1?'':'s'} tracked \u2014 ${parts.join(', ')}. ${compRate}% completion rate.${trend}${backlogNote}`;
-}
-
-/* ============================================================
-   RENDER: Program status chip (header)
-   ============================================================ */
-function renderProgramHealth() {
-  const h = state.programHealth;
-  const headerChip = document.getElementById('headerStatusChip');
-  if (!h) { headerChip.innerHTML = ''; return; }
-  headerChip.innerHTML = `<span class="dot level-${h.level}"></span>Program status: ${h.label}`;
+  return `<strong>${periodLabel}:</strong> ${total} unique task${total===1?'':'s'} tracked (${entries} entr${entries===1?'y':'ies'} logged) \u2014 ${parts.join(', ')}. ${compRate}% completion rate.${trend}${backlogNote}`;
 }
 
 /* ============================================================
@@ -1130,7 +1116,7 @@ function uniqueTaskCount(list) {
 }
 // One status per unique task = the status of its latest entry in the range
 // (latest start, then latest finish; if still tied, "in progress" wins as the work is not confirmed closed).
-function uniqueTaskStatuses(list) {
+function uniqueTaskList(list) {
   const norm = v => String(v || '').trim().toLowerCase().replace(/\s+/g, ' ');
   const rank = { completed: 0, scheduled: 1, 'in-progress': 2 };
   const latest = new Map();
@@ -1142,8 +1128,11 @@ function uniqueTaskStatuses(list) {
     const cStart = cur.start.getTime(), cFin = (cur.finish || cur.start).getTime();
     if (tStart > cStart || (tStart === cStart && (tFin > cFin || (tFin === cFin && rank[t.status] > rank[cur.status])))) latest.set(k, t);
   });
+  return [...latest.values()];
+}
+function uniqueTaskStatuses(list) {
   const c = { completed: 0, 'in-progress': 0, scheduled: 0 };
-  latest.forEach(t => { if (c[t.status] !== undefined) c[t.status]++; });
+  uniqueTaskList(list).forEach(t => { if (c[t.status] !== undefined) c[t.status]++; });
   return c;
 }
 function summaryRanges(range) {
@@ -1199,9 +1188,9 @@ function renderPeriodSummary(range) {
 /* ============================================================
    RENDER: KPI cards
    ============================================================ */
-function renderKPIs(counts, prevCounts) {
+function renderKPIs(counts, prevCounts, entries) {
   const total = totalOf(counts);
-  const pct = v => total ? Math.round((v/total)*100)+'% of total' : 'no tasks yet';
+  const pct = v => total ? Math.round((v/total)*100)+'% of unique tasks' : 'no tasks yet';
   const trend = k => {
     if (!prevCounts) return '';
     const diff = counts[k] - prevCounts[k];
@@ -1211,7 +1200,7 @@ function renderKPIs(counts, prevCounts) {
     return `<span class="kpi-trend ${cls}">${arrow} ${diff>0?'+':''}${diff} vs previous</span>`;
   };
   const rowHtml = `
-    <div class="kpi-card"><div class="kpi-label">Total tasks</div><div class="kpi-value">${total}</div><div class="kpi-sub">in selected period</div></div>
+    <div class="kpi-card"><div class="kpi-label">Unique tasks</div><div class="kpi-value">${total}</div><div class="kpi-sub">${entries} entr${entries===1?'y':'ies'} logged</div></div>
     <div class="kpi-card completed"><div class="kpi-label">Completed</div><div class="kpi-value">${counts.completed}</div><div class="kpi-sub">${pct(counts.completed)}</div>${trend('completed')}</div>
     <div class="kpi-card progress"><div class="kpi-label">In progress</div><div class="kpi-value">${counts['in-progress']}</div><div class="kpi-sub">${pct(counts['in-progress'])}</div>${trend('in-progress')}</div>
     <div class="kpi-card scheduled"><div class="kpi-label">Scheduled</div><div class="kpi-value">${counts.scheduled}</div><div class="kpi-sub">${pct(counts.scheduled)}</div>${trend('scheduled')}</div>
@@ -1234,7 +1223,7 @@ function populatePeriodSelect() {
     });
     const cur = state.periodValue instanceof Date ? dateKey(state.periodValue) : null;
     if (cur && [...sel.options].some(o=>o.value===cur)) sel.value = cur;
-    else if (sel.options.length) { sel.selectedIndex = sel.options.length-1; state.periodValue = state.weeks[state.weeks.length-1]; }
+    else if (sel.options.length) { state.periodValue = defaultPeriodValue('week'); sel.value = dateKey(state.periodValue); }
   } else if (state.periodType === 'month') {
     state.months.forEach(m => {
       const opt = document.createElement('option');
@@ -1244,7 +1233,7 @@ function populatePeriodSelect() {
     });
     const cur = state.periodValue instanceof Date ? monthKey(state.periodValue) : null;
     if (cur && [...sel.options].some(o=>o.value===cur)) sel.value = cur;
-    else if (sel.options.length) { sel.selectedIndex = sel.options.length-1; state.periodValue = state.months[state.months.length-1]; }
+    else if (sel.options.length) { state.periodValue = defaultPeriodValue('month'); sel.value = monthKey(state.periodValue); }
   } else {
     state.years.forEach(y => {
       const opt = document.createElement('option');
@@ -1263,8 +1252,10 @@ function populatePeriodSelect() {
 function render() {
   const range = currentRange();
   const periodTasks = tasksInRange(state.tasks, range.start, range.end);
-  const counts = countStatus(periodTasks);
-  renderProgramHealth();
+  const counts = countStatus(periodTasks);            // unique tasks by status
+  const entries = periodTasks.length;                 // raw rows logged (shown only as a labelled volume figure)
+  const uniqueList = uniqueTaskList(periodTasks);
+  const partial = range.end > state.asOfDate;         // period still in progress in the loaded data
 
   // ---- Donut ----
   const donutLabel = state.periodType === 'week'
@@ -1292,8 +1283,8 @@ function render() {
     const prevStart = addDays(weekStart, -7), prevEnd = endOfWeek(prevStart);
     const prevCounts = countStatus(tasksInRange(state.tasks, prevStart, prevEnd));
     compareTitleEl.textContent = 'Week-on-week comparison';
-    compareSubEl.textContent = fmtDate(prevStart) + '\u2013' + fmtDate(prevEnd) + '  vs  ' + fmtDate(weekStart) + '\u2013' + fmtDate(weekEnd);
-    renderComparison(compareChartEl, compareLegendEl, deltaChipEl, prevCounts, counts, 'Previous week', 'Selected week');
+    compareSubEl.textContent = fmtDate(prevStart) + '\u2013' + fmtDate(prevEnd) + '  vs  ' + fmtDate(weekStart) + '\u2013' + fmtDate(weekEnd) + '  \u00b7  unique tasks';
+    renderComparison(compareChartEl, compareLegendEl, deltaChipEl, prevCounts, counts, 'Previous week', partial ? 'Selected week (partial)' : 'Selected week');
     prevCountsForHeadline = prevCounts; prevLabelForHeadline = 'the previous week';
 
     const ref = referenceDateForWeek(weekStart);
@@ -1309,7 +1300,7 @@ function render() {
       wk = addDays(wk, 7);
     }
     document.getElementById('trendATitle').textContent = 'Running month-to-date';
-    document.getElementById('trendASubtitle').textContent = MONTH_FULL[mStart.getMonth()] + ' 1 \u2013 ' + fmtDateFull(ref);
+    document.getElementById('trendASubtitle').textContent = MONTH_FULL[mStart.getMonth()] + ' 1 \u2013 ' + fmtDateFull(ref) + '  \u00b7  unique tasks per week';
     renderStackedBar(document.getElementById('trendAChart'), weekCats, weekRows);
 
     // Trend B: months within the year, up to reference date's month
@@ -1322,7 +1313,7 @@ function render() {
       monthRows.push(countStatus(tasksInRange(state.tasks, ms, me)));
     }
     document.getElementById('trendBTitle').textContent = 'Running year-to-date';
-    document.getElementById('trendBSubtitle').textContent = 'Jan 1 \u2013 ' + fmtDateFull(ref);
+    document.getElementById('trendBSubtitle').textContent = 'Jan 1 \u2013 ' + fmtDateFull(ref) + '  \u00b7  unique tasks per month';
     renderStackedBar(document.getElementById('trendBChart'), monthCats, monthRows);
 
   } else if (state.periodType === 'month') {
@@ -1333,8 +1324,8 @@ function render() {
     const prevEnd = endOfMonth(prevStart);
     const prevCounts = countStatus(tasksInRange(state.tasks, prevStart, prevEnd));
     compareTitleEl.textContent = 'Month-on-month comparison';
-    compareSubEl.textContent = MONTH_FULL[prevStart.getMonth()] + ' ' + prevStart.getFullYear() + '  vs  ' + MONTH_FULL[mStart.getMonth()] + ' ' + mStart.getFullYear();
-    renderComparison(compareChartEl, compareLegendEl, deltaChipEl, prevCounts, counts, 'Previous month', 'Selected month');
+    compareSubEl.textContent = MONTH_FULL[prevStart.getMonth()] + ' ' + prevStart.getFullYear() + '  vs  ' + MONTH_FULL[mStart.getMonth()] + ' ' + mStart.getFullYear() + '  \u00b7  unique tasks';
+    renderComparison(compareChartEl, compareLegendEl, deltaChipEl, prevCounts, counts, 'Previous month', partial ? 'Selected month (partial)' : 'Selected month');
     prevCountsForHeadline = prevCounts; prevLabelForHeadline = 'the previous month';
 
     const weekCats = [], weekRows = [];
@@ -1348,7 +1339,7 @@ function render() {
       wk = addDays(wk, 7);
     }
     document.getElementById('trendATitle').textContent = 'Weeks in ' + MONTH_FULL[mStart.getMonth()];
-    document.getElementById('trendASubtitle').textContent = fmtDate(mStart) + ' \u2013 ' + fmtDateFull(mEnd);
+    document.getElementById('trendASubtitle').textContent = fmtDate(mStart) + ' \u2013 ' + fmtDateFull(mEnd) + '  \u00b7  unique tasks per week';
     renderStackedBar(document.getElementById('trendAChart'), weekCats, weekRows);
 
   } else {
@@ -1359,7 +1350,7 @@ function render() {
     compareTitleEl.textContent = 'Year-on-year comparison';
     if (hasPrev) {
       const prevCounts = countStatus(tasksInRange(state.tasks, new Date(y-1,0,1), new Date(y-1,11,31)));
-      compareSubEl.textContent = (y-1) + '  vs  ' + y;
+      compareSubEl.textContent = (y-1) + '  vs  ' + y + '  \u00b7  unique tasks';
       renderComparison(compareChartEl, compareLegendEl, deltaChipEl, prevCounts, counts, String(y-1), String(y));
       prevCountsForHeadline = prevCounts; prevLabelForHeadline = String(y-1);
     } else {
@@ -1376,23 +1367,31 @@ function render() {
       monthRows.push(countStatus(tasksInRange(state.tasks, ms, me)));
     }
     document.getElementById('trendATitle').textContent = 'Months in ' + y;
-    document.getElementById('trendASubtitle').textContent = 'Jan \u2013 Dec ' + y;
+    document.getElementById('trendASubtitle').textContent = 'Jan \u2013 Dec ' + y + '  \u00b7  unique tasks per month';
     renderStackedBar(document.getElementById('trendAChart'), monthCats, monthRows);
   }
 
-  document.getElementById('headlineBar').innerHTML = buildHeadline(donutLabel, counts, prevCountsForHeadline, prevLabelForHeadline, state.backlog.length);
+  // A period that is still in progress is not compared with the previous one (partial vs full would mislead).
+  const hadPrev = !!prevCountsForHeadline;
+  const prevShown = partial ? null : prevCountsForHeadline;
+  const asOfLabel = partial ? fmtDateFull(state.asOfDate) : '';
+  if (partial && hadPrev) { deltaChipEl.className = 'delta-chip flat'; deltaChipEl.textContent = 'Partial period'; }
+
+  document.getElementById('headlineBar').innerHTML = buildHeadline(donutLabel, counts, prevShown, prevLabelForHeadline, state.backlog.length, entries, asOfLabel, hadPrev);
   state.currentPeriodLabel = donutLabel;
   document.getElementById('printMeta').textContent = 'Period: ' + donutLabel;
-  renderKPIs(counts, prevCountsForHeadline);
+  renderKPIs(counts, prevShown, entries);
   renderPeriodSummary(range);
 
-  document.getElementById('periodNote').textContent = periodTasks.length + ' task' + (periodTasks.length===1?'':'s') + ' start in this period.';
-  document.getElementById('recentCaption').textContent = 'Tasks starting between ' + fmtDateFull(range.start) + ' and ' + fmtDateFull(range.end) + '. Click a column header to sort.';
+  document.getElementById('periodNote').textContent =
+    uniqueList.length + ' unique task' + (uniqueList.length===1?'':'s') + ' \u00b7 ' + entries + ' entr' + (entries===1?'y':'ies') + ' in this period' +
+    (partial ? ' \u00b7 partial period, data through ' + fmtDateFull(state.asOfDate) : '') + '.';
+  document.getElementById('recentCaption').textContent = 'Task entries starting between ' + fmtDateFull(range.start) + ' and ' + fmtDateFull(range.end) + '. Click a column header to sort.';
 
-  document.getElementById('clientSubtitle').textContent = donutLabel;
-  renderClientShares(document.getElementById('clientChart'), periodTasks);
-  document.getElementById('areaSubtitle').textContent = donutLabel;
-  renderAreaShares(document.getElementById('areaChart'), periodTasks);
+  document.getElementById('clientSubtitle').textContent = donutLabel + '  \u00b7  unique tasks';
+  renderClientShares(document.getElementById('clientChart'), uniqueList);
+  document.getElementById('areaSubtitle').textContent = donutLabel + '  \u00b7  unique tasks';
+  renderAreaShares(document.getElementById('areaChart'), uniqueList);
 
   renderRecentTable(periodTasks);
   renderBacklogTable(state.backlog);
