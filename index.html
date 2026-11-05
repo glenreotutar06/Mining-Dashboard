@@ -16,7 +16,6 @@
     --olive-tint:#EDF0E3;
     --gold:#AD7F24;
     --gold-tint:#F5EDDB;
-    --risk-red:#B5533D;
     --cream:#F5F3EC;
     --white:#FFFFFF;
     --ink:#1D2B2E;
@@ -82,7 +81,9 @@
   .source-panel .src-line{display:flex; align-items:center; gap:7px;}
   .src-dot{width:7px; height:7px; border-radius:50%; background:var(--olive); flex:none;}
   .src-dot.offline{background:var(--gold);}
-  .source-file{color:#fff; font-weight:600;}
+  .source-file{color:var(--ink); font-weight:600;}
+  .footer .src-dot{display:inline-block; margin-right:6px; vertical-align:middle;}
+  .src-toast{font-size:12px; color:#DCE8EA; min-height:16px;}
   .btn{
     font-family:var(--font-body);
     font-size:12.5px;
@@ -122,6 +123,7 @@
 
   /* ---------- KPI cards ---------- */
   .kpi-row{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:18px;}
+  .kpi-row.three{grid-template-columns:repeat(3,1fr);}
   .kpi-card{
     background:var(--white); border:1px solid var(--line); border-left:4px solid var(--navy);
     border-radius:8px; padding:14px 16px;
@@ -142,7 +144,7 @@
   .chart-card.alt{border-top-color:var(--olive);}
   .chart-title{font-family:var(--font-head); font-size:14.5px; font-weight:600; color:var(--ink); margin:0 0 2px;}
   .chart-subtitle{font-size:12px; color:var(--ink-soft); margin:0 0 10px;}
-  .donut-wrap{display:flex; align-items:center; gap:18px;}
+  .donut-wrap{display:flex; align-items:center; justify-content:center; gap:24px; min-height:210px;}
   .donut-total{font-family:var(--font-head); font-size:26px; font-weight:700; fill:var(--ink);}
   .donut-sub{font-size:10.5px; fill:var(--ink-soft);}
   .legend{display:flex; flex-direction:column; gap:9px; font-size:13px;}
@@ -174,7 +176,7 @@
   .share-bar-fill{display:block; height:100%; border-radius:4px;}
   .share-count{text-align:right; font-weight:700; color:var(--ink);}
   .share-pct{text-align:right; color:var(--ink-soft);}
-  @media (max-width:600px){
+  @media screen and (max-width:600px){
     .share-row{grid-template-columns:110px 1fr 26px 36px; font-size:11.5px;}
   }
 
@@ -182,7 +184,10 @@
   .section-title{font-family:var(--font-head); font-size:17px; font-weight:600; margin:26px 0 4px;}
   .section-caption{font-size:12.5px; color:var(--ink-soft); margin:0 0 12px;}
   .table-card{background:var(--white); border:1px solid var(--line); border-radius:8px; overflow:hidden;}
-  .table-scroll{max-height:440px; overflow-y:auto;}
+  .table-scroll{max-height:440px; overflow-y:auto; overflow-x:auto;}
+  .cell-date{white-space:nowrap;}
+  .charts-row > *, .trend-row > *, .summary-row > *{min-width:0;}
+  .chart-legend{display:flex; gap:16px; flex-wrap:wrap; margin:2px 0 6px; font-size:12px;}
   table.data-table{width:100%; border-collapse:collapse; font-size:13px;}
   .data-table thead th{
     position:sticky; top:0; z-index:2;
@@ -209,8 +214,7 @@
 
   /* ---------- KPI trend ---------- */
   .kpi-trend{display:block; margin-top:5px; font-size:11.5px; font-weight:700;}
-  .kpi-trend.up{color:#4d5b2c;}
-  .kpi-trend.down{color:var(--risk-red);}
+  .kpi-trend.up, .kpi-trend.down{color:var(--navy);}
   .kpi-trend.flat{color:var(--ink-soft); font-weight:500;}
 
   /* ---------- MTD / YTD summary ---------- */
@@ -277,13 +281,15 @@
 
   .footer{margin-top:30px; font-size:11.5px; color:var(--ink-soft); text-align:center;}
 
-  @media (max-width:880px){
-    .kpi-row{grid-template-columns:repeat(2,1fr);}
+  @media screen and (max-width:880px){
+    .kpi-row, .kpi-row.three{grid-template-columns:repeat(2,1fr);}
     .charts-row, .trend-row, .summary-row{grid-template-columns:1fr;}
     .summary-tiles{grid-template-columns:repeat(3,1fr); row-gap:12px;}
     .summary-tile:nth-child(4){border-left:none; padding-left:0;}
     .header{flex-direction:column; align-items:flex-start;}
     .source-panel{align-items:flex-start; text-align:left;}
+    .data-table{min-width:720px;}
+    .donut-wrap{flex-wrap:wrap; gap:12px; min-height:0;}
   }
 
   /* ---------- Print / export ---------- */
@@ -307,6 +313,15 @@
     .kpi-card, .chart-card, .table-card, .headline, .summary-card{break-inside:avoid; page-break-inside:avoid;}
     .section-title{page-break-after:avoid;}
     .data-table thead th{position:static;}
+    .data-table{min-width:0 !important; font-size:11.5px;}
+    .data-table tbody td, .data-table thead th{padding:7px 8px;}
+    .cell-remarks{max-width:none;}
+    /* charts and summary cards run full width on paper so text stays legible */
+    .summary-row, .charts-row:not(.shares-row), .trend-row{grid-template-columns:1fr !important;}
+    /* long tables flow across pages; headings stay with their table; rows never split */
+    .table-card{break-inside:auto !important; page-break-inside:auto !important;}
+    .data-table tr{break-inside:avoid; page-break-inside:avoid;}
+    .section-title, .section-caption{break-after:avoid; page-break-after:avoid;}
     * { -webkit-print-color-adjust:exact; print-color-adjust:exact; color-adjust:exact; }
   }
 </style>
@@ -340,14 +355,13 @@
       </div>
     </div>
     <div class="source-panel">
-      <div class="src-line"><span class="src-dot" id="srcDot"></span><span id="srcLabel">Loading source data&hellip;</span></div>
-      <div id="srcMeta">&nbsp;</div>
       <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
         <button class="btn" id="printBtn" title="Print this dashboard or save it as a PDF">Print / Export PDF</button>
         <button class="btn" id="avatarModalBtn" title="Add or update assignee photos">Assignee photos&hellip;</button>
         <button class="btn" id="retryFetchBtn" title="Re-check the linked CSV file">Re-check source</button>
         <button class="btn primary" id="loadFileBtn">Update data&hellip;</button>
       </div>
+      <div class="src-toast" id="srcToast" role="status" aria-live="polite"></div>
       <input type="file" id="fileInput" accept=".csv,text/csv">
     </div>
   </div>
@@ -403,7 +417,7 @@
     </div>
   </div>
 
-  <div class="charts-row">
+  <div class="charts-row shares-row">
     <div class="chart-card client-card">
       <h3 class="chart-title" id="clientTitle">Client shares</h3>
       <p class="chart-subtitle" id="clientSubtitle"></p>
@@ -457,7 +471,8 @@
     </div>
   </div>
 
-  <p class="footer">Global Geologica Pty Ltd &middot; Mining Business Unit Dashboard &middot; data refreshes from the linked CSV export</p>
+  <p class="footer">Global Geologica Pty Ltd &middot; Mining Business Unit Dashboard<br>
+    <span class="src-dot" id="srcDot"></span><span id="srcLabel">Loading source data&hellip;</span> &middot; <span id="srcMeta">&nbsp;</span></p>
 
   </td></tr></tbody></table>
 </div>
@@ -705,14 +720,17 @@ function dateKey(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padS
 function monthKey(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0'); }
 function sameDay(a,b){ return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate(); }
 
-function niceCeil(v) {
-  if (v <= 5) return 5;
-  const mag = Math.pow(10, Math.floor(Math.log10(v)));
-  const norm = v / mag;
-  let nice;
-  if (norm <= 1) nice = 1; else if (norm <= 2) nice = 2; else if (norm <= 2.5) nice = 2.5; else if (norm <= 5) nice = 5; else nice = 10;
-  return nice * mag;
+// Even, whole-number axis steps (e.g. 0, 10, 20, 30) instead of rounded fractions
+function axisScale(maxVal) {
+  const m = Math.max(1, maxVal);
+  if (m <= 4) return { top: 4, step: 1 };
+  const steps = [1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 5000];
+  for (const st of steps) if (Math.ceil(m / st) <= 5) return { top: st * Math.ceil(m / st), step: st };
+  const st = Math.pow(10, Math.ceil(Math.log10(m / 5)));
+  return { top: st * Math.ceil(m / st), step: st };
 }
+// "Scheduled" is only shown when the loaded data actually contains scheduled tasks
+function statusKeys() { return state.hasScheduled ? ['completed','in-progress','scheduled'] : ['completed','in-progress']; }
 
 function fixText(s) {
   if (!s) return s;
@@ -734,7 +752,6 @@ function escapeHtml(s) {
 const COLORS = { completed: '#82914F', 'in-progress': '#0C3547', scheduled: '#AD7F24' };
 const STATUS_LABELS = { completed: 'Completed', 'in-progress': 'In progress', scheduled: 'Scheduled' };
 const AVATAR_PALETTE = ['#0C3547', '#82914F', '#AD7F24', '#5B7C8D', '#7A5C74', '#8E6E53'];
-const CLIENT_PALETTE = ['#0C3547', '#82914F', '#AD7F24', '#5B7C8D', '#7A5C74', '#8E6E53', '#3F5C3A', '#2F6B82'];
 
 function hashStr(s) {
   let h = 0;
@@ -781,6 +798,7 @@ const state = {
   sourceLabel: SOURCE_FILENAME,
   linked: false,
   pollTimer: null,
+  hasScheduled: false,
   avatars: new Map(), // name (lowercase) -> data URL
   currentPeriodLabel: ''
 };
@@ -816,6 +834,7 @@ function buildFromRows(rows) {
   });
 
   state.tasks = tasks;
+  state.hasScheduled = tasks.some(t => t.status === 'scheduled');
   state.backlog = backlog;
   state.weeks = [...weekMap.values()].sort((a,b)=>a-b);
   state.months = [...monthMap.values()].sort((a,b)=>a-b);
@@ -899,7 +918,7 @@ function renderDonut(container, legendContainer, counts) {
   const svg = se('svg', { viewBox:`0 0 ${size} ${size}`, width:'100%', height:size });
   svg.appendChild(se('circle', { cx:size/2, cy:size/2, r, fill:'none', stroke:'#EEEBDF', 'stroke-width':stroke }));
   let offset = 0;
-  const order = ['completed','in-progress','scheduled'];
+  const order = statusKeys();
   if (total > 0) {
     order.forEach(k => {
       const v = counts[k];
@@ -942,15 +961,16 @@ function renderStackedBar(container, categories, rows) {
   const gap = n > 8 ? 6 : 12;
   const barW = Math.min(46, (plotW - gap*(n-1)) / n);
   const totals = rows.map(r => (r.completed||0)+(r['in-progress']||0)+(r.scheduled||0));
-  const maxTotal = niceCeil(Math.max(1, ...totals));
+  const sc = axisScale(Math.max(1, ...totals));
+  const maxTotal = sc.top;
   const svg = se('svg', { viewBox:`0 0 ${W} ${H}`, width:'100%', height:H });
 
-  const steps = 4;
+  const steps = sc.top / sc.step;
   for (let i=0;i<=steps;i++) {
     const y = padT + plotH - (i/steps)*plotH;
     svg.appendChild(se('line', { x1:padL, y1:y, x2:W-padR, y2:y, stroke:'#EEEBDF', 'stroke-width':1 }));
     const lbl = se('text', { x:padL-6, y:y+3, 'text-anchor':'end', class:'axis-label' });
-    lbl.textContent = Math.round(maxTotal*i/steps);
+    lbl.textContent = i * sc.step;
     svg.appendChild(lbl);
   }
 
@@ -976,26 +996,31 @@ function renderStackedBar(container, categories, rows) {
     }
   });
   container.appendChild(svg);
+  const lg = document.createElement('div');
+  lg.className = 'chart-legend';
+  lg.innerHTML = statusKeys().map(k => `<span class="legend-item"><span class="swatch" style="background:${COLORS[k]}"></span><span class="legend-label">${STATUS_LABELS[k]}</span></span>`).join('');
+  container.appendChild(lg);
 }
 
 function renderComparison(container, legendContainer, deltaEl, prevCounts, currCounts, prevLabel, currLabel) {
   container.innerHTML = ''; legendContainer.innerHTML = '';
-  const keys = ['completed','in-progress','scheduled'];
+  const keys = statusKeys();
   const W = 560, H = 210, padL = 30, padR = 8, padT = 14, padB = 30;
   const plotW = W-padL-padR, plotH = H-padT-padB;
   const groupGap = 26, barGap = 6;
   const n = keys.length;
   const groupW = (plotW - groupGap*(n-1)) / n;
   const barW = (groupW - barGap) / 2;
-  const maxVal = niceCeil(Math.max(1, ...keys.map(k => Math.max(prevCounts[k]||0, currCounts[k]||0))));
+  const sc = axisScale(Math.max(1, ...keys.map(k => Math.max(prevCounts[k]||0, currCounts[k]||0))));
+  const maxVal = sc.top;
   const svg = se('svg', { viewBox:`0 0 ${W} ${H}`, width:'100%', height:H });
 
-  const steps = 4;
+  const steps = sc.top / sc.step;
   for (let i=0;i<=steps;i++) {
     const y = padT + plotH - (i/steps)*plotH;
     svg.appendChild(se('line', { x1:padL, y1:y, x2:W-padR, y2:y, stroke:'#EEEBDF', 'stroke-width':1 }));
     const lbl = se('text', { x:padL-6, y:y+3, 'text-anchor':'end', class:'axis-label' });
-    lbl.textContent = Math.round(maxVal*i/steps);
+    lbl.textContent = i * sc.step;
     svg.appendChild(lbl);
   }
 
@@ -1050,7 +1075,7 @@ function renderShareBreakdown(container, tasks, keyFn, emptyMsg, otherLabelFn) {
   container.innerHTML = shown.map(([label, count], idx) => {
     const pct = Math.round((count / total) * 100);
     const barPct = Math.round((count / maxCount) * 100);
-    const color = CLIENT_PALETTE[idx % CLIENT_PALETTE.length];
+    const color = /^Other (clients|areas) \(/.test(label) ? '#9DB0B8' : '#2F6B82';
     const safeLabel = escapeHtml(label);
     return `
       <div class="share-row">
@@ -1203,9 +1228,11 @@ function renderKPIs(counts, prevCounts, entries) {
     <div class="kpi-card"><div class="kpi-label">Unique tasks</div><div class="kpi-value">${total}</div><div class="kpi-sub">${entries} entr${entries===1?'y':'ies'} logged</div></div>
     <div class="kpi-card completed"><div class="kpi-label">Completed</div><div class="kpi-value">${counts.completed}</div><div class="kpi-sub">${pct(counts.completed)}</div>${trend('completed')}</div>
     <div class="kpi-card progress"><div class="kpi-label">In progress</div><div class="kpi-value">${counts['in-progress']}</div><div class="kpi-sub">${pct(counts['in-progress'])}</div>${trend('in-progress')}</div>
-    <div class="kpi-card scheduled"><div class="kpi-label">Scheduled</div><div class="kpi-value">${counts.scheduled}</div><div class="kpi-sub">${pct(counts.scheduled)}</div>${trend('scheduled')}</div>
+    ${state.hasScheduled ? `<div class="kpi-card scheduled"><div class="kpi-label">Scheduled</div><div class="kpi-value">${counts.scheduled}</div><div class="kpi-sub">${pct(counts.scheduled)}</div>${trend('scheduled')}</div>` : ''}
   `;
-  document.getElementById('kpiRow').innerHTML = rowHtml;
+  const kpiEl = document.getElementById('kpiRow');
+  kpiEl.className = 'kpi-row' + (state.hasScheduled ? '' : ' three');
+  kpiEl.innerHTML = rowHtml;
 }
 
 /* ============================================================
@@ -1275,6 +1302,7 @@ function render() {
   const deltaChipEl = document.getElementById('deltaChip');
   const trendRowEl = document.getElementById('trendRow');
   let prevCountsForHeadline = null, prevLabelForHeadline = '';
+  trendRowEl.style.display = ''; deltaChipEl.style.display = '';
 
   if (state.periodType === 'week') {
     trendRowEl.classList.remove('single');
@@ -1347,28 +1375,31 @@ function render() {
     document.getElementById('trendBCard').style.display = 'none';
     const y = range.start.getFullYear();
     const hasPrev = state.years.includes(y-1);
-    compareTitleEl.textContent = 'Year-on-year comparison';
-    if (hasPrev) {
-      const prevCounts = countStatus(tasksInRange(state.tasks, new Date(y-1,0,1), new Date(y-1,11,31)));
-      compareSubEl.textContent = (y-1) + '  vs  ' + y + '  \u00b7  unique tasks';
-      renderComparison(compareChartEl, compareLegendEl, deltaChipEl, prevCounts, counts, String(y-1), String(y));
-      prevCountsForHeadline = prevCounts; prevLabelForHeadline = String(y-1);
-    } else {
-      compareSubEl.textContent = 'No data available for ' + (y-1) + ' yet';
-      compareChartEl.innerHTML = '<p style="color:var(--ink-soft); font-size:13px; padding:30px 0; text-align:center;">Not enough history to compare years yet.</p>';
-      compareLegendEl.innerHTML = '';
-      deltaChipEl.className = 'delta-chip flat'; deltaChipEl.textContent = '\u2014';
-    }
-
     const monthCats = [], monthRows = [];
     for (let m=0;m<12;m++) {
       const ms = new Date(y, m, 1), me = endOfMonth(ms);
       monthCats.push(MONTHS[m]);
       monthRows.push(countStatus(tasksInRange(state.tasks, ms, me)));
     }
-    document.getElementById('trendATitle').textContent = 'Months in ' + y;
-    document.getElementById('trendASubtitle').textContent = 'Jan \u2013 Dec ' + y + '  \u00b7  unique tasks per month';
-    renderStackedBar(document.getElementById('trendAChart'), monthCats, monthRows);
+    const monthsSub = 'Jan \u2013 Dec ' + y + '  \u00b7  unique tasks per month';
+    if (hasPrev) {
+      compareTitleEl.textContent = 'Year-on-year comparison';
+      const prevCounts = countStatus(tasksInRange(state.tasks, new Date(y-1,0,1), new Date(y-1,11,31)));
+      compareSubEl.textContent = (y-1) + '  vs  ' + y + '  \u00b7  unique tasks';
+      renderComparison(compareChartEl, compareLegendEl, deltaChipEl, prevCounts, counts, String(y-1), String(y));
+      prevCountsForHeadline = prevCounts; prevLabelForHeadline = String(y-1);
+      document.getElementById('trendATitle').textContent = 'Months in ' + y;
+      document.getElementById('trendASubtitle').textContent = monthsSub;
+      renderStackedBar(document.getElementById('trendAChart'), monthCats, monthRows);
+    } else {
+      // No earlier year to compare with: use that slot for the month-by-month view instead of an empty card
+      compareTitleEl.textContent = 'Months in ' + y;
+      compareSubEl.textContent = monthsSub;
+      compareLegendEl.innerHTML = '';
+      deltaChipEl.style.display = 'none';
+      renderStackedBar(compareChartEl, monthCats, monthRows);
+      trendRowEl.style.display = 'none';
+    }
   }
 
   // A period that is still in progress is not compared with the previous one (partial vs full would mislead).
@@ -1425,8 +1456,8 @@ function renderRecentTable(tasks) {
         <td class="cell-muted">${t.area ? escapeHtml(t.area) : '\u2014'}</td>
         <td class="cell-muted">${escapeHtml(t.client)}</td>
         <td>${avatarGroupHtml(t.assignTo)}</td>
-        <td class="cell-muted">${fmtDate(t.start)}</td>
-        <td class="cell-muted">${t.finish ? fmtDate(t.finish) : '\u2014'}</td>
+        <td class="cell-muted cell-date">${fmtDate(t.start)}</td>
+        <td class="cell-muted cell-date">${t.finish ? fmtDate(t.finish) : '\u2014'}</td>
         <td class="cell-remarks">${t.remarks ? escapeHtml(t.remarks) : '\u2014'}</td>
       </tr>`).join('');
   }
@@ -1586,6 +1617,7 @@ document.getElementById('fileInput').addEventListener('change', e => {
   const reader = new FileReader();
   reader.onload = ev => {
     applyNewData(ev.target.result, file.name, false);
+    showToast('Loaded ' + file.name);
   };
   reader.readAsText(file);
 });
@@ -1640,12 +1672,21 @@ function applyNewData(text, label, linked) {
   updateSourcePanel();
 }
 
+let toastTimer = null;
+function showToast(msg) {
+  const el = document.getElementById('srcToast');
+  if (!el) return;
+  el.textContent = msg;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.textContent = ''; }, 4500);
+}
+
 function updateSourcePanel() {
   const dot = document.getElementById('srcDot');
   const label = document.getElementById('srcLabel');
   const meta = document.getElementById('srcMeta');
   dot.classList.toggle('offline', !state.linked);
-  label.innerHTML = 'Source: <span class="source-file">' + escapeHtml(state.sourceLabel) + '</span>';
+  label.innerHTML = 'Data source: <span class="source-file">' + escapeHtml(state.sourceLabel) + '</span>';
   const allDated = state.tasks;
   const latest = allDated.length ? allDated.reduce((m,t)=> t.start>m ? t.start : m, allDated[0].start) : null;
   const asOf = latest ? ('Latest activity ' + fmtDateFull(latest)) : 'No dated tasks found';
@@ -1653,19 +1694,17 @@ function updateSourcePanel() {
 }
 
 function attemptLink(manual) {
-  const dot = document.getElementById('srcDot');
-  const label = document.getElementById('srcLabel');
-  if (manual) label.textContent = 'Re-checking ' + SOURCE_FILENAME + '\u2026';
   const fallback = () => {
     if (!manual && !state.tasks.length && !state.backlog.length) {
-      // first load failed -> fall back to embedded snapshot
+      // first load could not reach the CSV -> use the embedded snapshot
       applyNewData(EMBEDDED_CSV, SOURCE_FILENAME + ' (embedded snapshot)', false);
     } else if (manual) {
-      updateSourcePanel();
-      label.textContent = 'Could not reach ' + SOURCE_FILENAME + ' \u2014 using last loaded data';
-      setTimeout(updateSourcePanel, 2500);
+      showToast('Could not reach ' + SOURCE_FILENAME + ' \u2014 showing the last loaded data. Use "Update data" to load a file.');
     }
   };
+  // Browsers block reading a file from a local (file://) page, so don't even try
+  if (location.protocol === 'file:') { fallback(); return; }
+  if (manual) showToast('Re-checking ' + SOURCE_FILENAME + '\u2026');
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 4000);
@@ -1673,6 +1712,7 @@ function attemptLink(manual) {
       .then(res => { clearTimeout(timeout); if (!res.ok) throw new Error('not ok'); return res.text(); })
       .then(text => {
         applyNewData(text, SOURCE_FILENAME, true);
+        if (manual) showToast('Data refreshed from ' + SOURCE_FILENAME);
         if (!state.pollTimer) {
           state.pollTimer = setInterval(() => attemptLink(false), 60000);
         }
